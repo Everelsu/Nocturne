@@ -1,6 +1,3 @@
-<a href="https://discord.gg/wRCgB7vBQv">
-    <img src="https://img.shields.io/discord/811542332678996008?color=7289DA&label=Support&logo=discord&style=for-the-badge" alt="Discord">
-</a>
 
 # Vocard Bot
 Vocard is a highly customizable Discord music bot, designed to deliver a user-friendly experience. It offers support for a wide range of streaming platforms including Youtube, Soundcloud, Spotify, Twitch, and more.
