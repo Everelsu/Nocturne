@@ -5,7 +5,7 @@ RUN groupadd -g 322 lavalink && \
 
 WORKDIR /opt/Lavalink
 
-ADD --chown=lavalink:lavalink https://github.com/lavalink-devs/Lavalink/releases/latest/download/Lavalink.jar .
+COPY --chown=lavalink:lavalink Lavalink.jar .
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends netcat-openbsd && \

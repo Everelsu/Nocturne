@@ -29,6 +29,9 @@ import function as func
 
 from discord.ext import commands
 
+from voicelink import MongoDBHandler, Config
+from voicelink.utils import TempCtx
+
 class Listeners(commands.Cog):
     """Music Cog."""
 
@@ -36,25 +39,27 @@ class Listeners(commands.Cog):
         self.bot = bot
         self.voicelink = voicelink.NodePool()
 
-        bot.loop.create_task(self.start_nodes())
-        bot.loop.create_task(self.restore_last_session_players())
+    async def cog_load(self) -> None:
+        asyncio.ensure_future(self.start_nodes())
+        asyncio.ensure_future(self.restore_last_session_players())
         
     async def start_nodes(self) -> None:
-        """Connect and intiate nodes."""
-        for n in func.settings.nodes.values():
-            try:
-                await self.voicelink.create_node(
-                    bot=self.bot,
-                    logger=func.logger,
-                    **n
-                )
-            except Exception as e:
-                func.logger.error(f'Node {n["identifier"]} is not able to connect! - Reason: {e}')
+        """Connect and initiate nodes."""
+        async def _connect(n):
+            for attempt in range(1, 11):
+                try:
+                    await self.voicelink.create_node(bot=self.bot, **n)
+                    return
+                except Exception as e:
+                    func.logger.error(f'Node {n["identifier"]} attempt {attempt}/10 failed - Reason: {e}')
+                    await asyncio.sleep(10)
+            func.logger.error(f'Node {n["identifier"]} gave up after 10 attempts.')
+        await asyncio.gather(*[_connect(n) for n in Config().nodes.values()])
 
     async def restore_last_session_players(self) -> None:
         """Re-establish connections for players from the last session."""
         await self.bot.wait_until_ready()
-        players = func.open_json(func.LAST_SESSION_FILE_NAME)
+        players = func.open_json(Config.LAST_SESSION_FILE_DIR)
         if not players:
             return
 
@@ -75,11 +80,11 @@ class Listeners(commands.Cog):
                     continue
 
                 # Get the guild settings
-                settings = await func.get_settings(channel.guild.id)
+                settings = await MongoDBHandler.get_settings(channel.guild.id)
 
                 # Connect to the channel and initialize the player.
                 player: voicelink.Player = await channel.connect(
-                    cls=voicelink.Player(self.bot, channel, func.TempCtx(dj_member, channel), settings)
+                    cls=voicelink.Player(self.bot, channel, TempCtx(dj_member, channel), settings)
                 )
 
                 # Restore the queue.
@@ -89,7 +94,7 @@ class Listeners(commands.Cog):
                     if not track_id:
                         continue
 
-                    decoded_track = voicelink.decode(track_id)
+                    decoded_track = voicelink.Track.decode(track_id)
                     requester = channel.guild.get_member(track_data.get("requester_id"))
                     track = voicelink.Track(track_id=track_id, info=decoded_track, requester=requester)
                     player.queue._queue.append(track)
@@ -118,19 +123,18 @@ class Listeners(commands.Cog):
                     if position := data.get("position"):
                         await player.seek(int(position), self.bot.user)
 
-                await asyncio.sleep(5)
+                await asyncio.sleep(0.5)
 
             except Exception as e:
                 func.logger.error(f"Error encountered while restoring a player for channel ID {channel_id}.", exc_info=e)
 
         # Delete the last session file if it exists.
         try:
-            file_path = os.path.join(func.ROOT_DIR, func.LAST_SESSION_FILE_NAME)
-            if os.path.exists(file_path):
-                os.remove(file_path)
+            if os.path.exists(Config.LAST_SESSION_FILE_DIR):
+                os.remove(Config.LAST_SESSION_FILE_DIR)
 
         except Exception as del_error:
-            func.logger.error("Failed to remove session file: %s", file_path, exc_info=del_error)
+            func.logger.error("Failed to remove session file: %s", Config.LAST_SESSION_FILE_DIR, exc_info=del_error)
 
     @commands.Cog.listener()
     async def on_voicelink_track_end(self, player: voicelink.Player, track, _):
@@ -175,11 +179,22 @@ class Listeners(commands.Cog):
                 is_joined = False
                 
         if is_joined and player.settings.get("24/7", False):
-            if player.is_paused and len([m for m in player.channel.members if not m.bot]) == 1:
+            if player.is_paused and len([m for m in player.channel.members if not m.bot or not m.voice.self_deaf]) == 1:
                 await player.set_pause(False, member)
-                  
-        if self.bot.ipc._is_connected:
-            await self.bot.ipc.send({
+                    
+        if not is_joined:
+            if not player.is_paused and len([m for m in player.channel.members if not m.bot or not m.voice.self_deaf]) == 0:
+                player._schedule_inactive_cleanup_timer()
+
+        # if dj is not in the channel, find a new DJ
+        if player.dj not in player.channel.members:
+            for m in player.channel.members:
+                if not m.bot or not m.voice.self_deaf:
+                    player.dj = m
+                    break
+                    
+        if player.is_ipc_connected:
+            await player._ipc_client.send({
                 "op": "updateGuild",
                 "user": {
                     "userId": str(member.id),

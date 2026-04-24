@@ -31,7 +31,7 @@ import subprocess
 from io import BytesIO
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-__version__ = "v2.7.2"
+__version__ = "v2.7.3b2"
 
 # URLs for update and migration
 PYTHON_CMD_NAME = os.path.basename(sys.executable)
@@ -55,8 +55,13 @@ def check_version(with_msg=False):
     Returns:
         str: the latest version.
     """
-    response = requests.get(GITHUB_API_URL)
-    latest_version = response.json().get("name", __version__)
+    try:
+        response = requests.get(GITHUB_API_URL, timeout=5)
+        latest_version = response.json().get("name", __version__)
+    except Exception:
+        if with_msg:
+            print(f"{bcolors.WARNING}Could not check for updates (no internet access).{bcolors.ENDC}")
+        return __version__
     if with_msg:
         msg = (
             f"{bcolors.OKGREEN}Your bot is up-to-date! - {latest_version}{bcolors.ENDC}" 

@@ -1,0 +1,44 @@
+{% block menu %}
+<div class="menu-container">
+    <div class="scrollbar">
+        <div class="top">
+
+            <div class="bot-selection">
+                <div class="selected">
+                    <div class="left"></div>
+                    <span class="material-symbols-outlined">keyboard_arrow_down</span>
+                </div>
+                <div class="options"></div>
+            </div>
+
+            <div class="bar"></div>
+
+            <span class="section-label">// Navigate</span>
+            <div class="section">
+                <div class="menu-btn active" id="menu-main-page">
+                    <span class="material-symbols-outlined">home</span>
+                    <p>{{ _("Home") }}</p>
+                </div>
+                <div class="menu-btn" id="menu-explore-page">
+                    <span class="material-symbols-outlined">explore</span>
+                    <p>{{ _("Explore") }}</p>
+                </div>
+            </div>
+
+            <div class="bar"></div>
+
+            <span class="section-label">// Library</span>
+            <div class="section">
+                <div class="menu-btn center" id="menu-create-playlist">
+                    <span class="material-symbols-outlined">add</span>
+                    <p class="header-text">{{ _("New Playlist") }}</p>
+                </div>
+                <div id="playlist-selector"></div>
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+{% endblock %}

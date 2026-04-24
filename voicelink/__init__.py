@@ -21,18 +21,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-__version__ = "1.4"
+__version__ = "1.5"
 __author__ = 'Vocard Development, ChocoMeow'
 __license__ = "MIT"
 __copyright__ = "Copyright 2023 - present (c) Vocard Development, ChocoMeow"
 
-from .enums import SearchType, LoopType
+from .config import Config
+from .enums import SearchType, LoopType, TrackRecType
 from .events import *
 from .exceptions import *
 from .filters import *
 from .objects import *
-from .player import Player, connect_channel
 from .pool import *
 from .queue import *
-from .placeholders import Placeholders, build_embed
-from .transformer import encode, decode
+from .player import Player, connect_channel
+from .placeholders import PlayerPlaceholder, BotPlaceholder
+from .mongodb import MongoDBHandler
+from .language import LangHandler
+from .lyrics import LYRICS_PLATFORMS
+from .ipc import IPCClient

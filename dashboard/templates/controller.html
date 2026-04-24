@@ -1,0 +1,65 @@
+{% block controller %}
+<div class="control-container">
+    <div class="left important" id="control-info">
+        <img id="controller-img" src alt />
+        <div class="track-info important">
+            <p class="title" id="controller-title"></p>
+            <p class="description non-essential" id="controller-description"></p>
+        </div>
+        <span class="material-symbols-outlined clickable non-essential" id="like-btn">favorite</span>
+    </div>
+    <div class="center important">
+        <div class="actions">
+            <div class="btn non-essential">
+                <span class="material-symbols-outlined clickable filled" id="rewind-btn">fast_rewind</span>
+                <p class="label">{{ _("Rewind 10s") }}</p>
+            </div>
+            <div class="btn non-essential">
+                <span class="material-symbols-outlined clickable" id="shuffle-btn">shuffle</span>
+                <p class="label">{{ _("Shuffle") }}</p>
+            </div>
+            <div class="btn important">
+                <span class="material-symbols-outlined clickable filled" id="back-btn">skip_previous</span>
+                <p class="label non-essential">{{ _("Back") }}</p>
+            </div>
+            <div class="btn important">
+                <span class="material-symbols-outlined clickable play_btn filled" id="play-pause-btn">play_circle</span>
+                <p class="label non-essential">{{ _("Play") }}</p>
+            </div>
+            <div class="btn important">
+                <span class="material-symbols-outlined clickable filled" id="skip-btn">skip_next</span>
+                <p class="label non-essential">{{ _("Skip") }}</p>
+            </div>
+            <div class="btn non-essential">
+                <span class="material-symbols-outlined clickable" id="repeat-btn">repeat</span>
+                <p class="label">{{ _("Repeat") }}</p>
+            </div>
+            <div class="btn non-essential">
+                <span class="material-symbols-outlined clickable filled" id="forward-btn">fast_forward</span>
+                <p class="label">{{ _("Forward 10s") }}</p>
+            </div>
+        </div>
+        <div class="position non-essential">
+            <span id="start-time">00:00</span>
+            <input type="range" class="position-bar" id="position-bar" min="1" max="500" value="0" />
+            <span id="end-time">00:00</span>
+        </div>
+    </div>
+    <div class="right important">
+        <input type="range" class="volume-bar non-essential" id="volume-bar" min="0" max="100" value="0" />
+        <div class="btn non-essential">
+            <span class="material-symbols-outlined clickable">volume_up</span>
+            <p class="label">{{ _("Volume") }}</p>
+        </div>
+        <div class="btn non-essential">
+            <div id="effect-panel" class="effect-panel"></div>
+            <span class="material-symbols-outlined clickable" id="toggle-effect-panel">tune</span>
+            <p class="label">{{ _("Effect") }}</p>
+        </div>
+        <div class="btn important">
+            <span class="material-symbols-outlined clickable" id="toggle-queue-view">queue_music</span>
+            <p class="label non-essential">{{ _("Queue") }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

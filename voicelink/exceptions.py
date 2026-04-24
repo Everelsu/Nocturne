@@ -25,7 +25,7 @@ class VoicelinkException(Exception):
     """Base of all Voicelink exceptions."""
 
 
-class NodeException(Exception):
+class NodeException(VoicelinkException):
     """Base exception for nodes."""
 
 

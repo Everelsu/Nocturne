@@ -1,0 +1,807 @@
+# French translations for Vocard-Dashboard.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the Vocard-Dashboard
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version:  2.0.0\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-08-25 16:48+0800\n"
+"PO-Revision-Date: 2025-05-11 20:07+0200\n"
+"Last-Translator: Buco7854\n"
+"Language: fr\n"
+"Language-Team: FR\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.16.0\n"
+
+#: templates/controller.html:15
+msgid "Rewind 10s"
+msgstr "Reculer de 10s"
+
+#: templates/controller.html:19
+msgid "Shuffle"
+msgstr "Mélanger"
+
+#: templates/controller.html:23
+msgid "Back"
+msgstr "Précédent"
+
+#: templates/controller.html:27
+msgid "Play"
+msgstr "Lecture"
+
+#: templates/controller.html:31
+msgid "Skip"
+msgstr "Passer"
+
+#: templates/controller.html:35
+msgid "Repeat"
+msgstr "Répéter"
+
+#: templates/controller.html:39
+msgid "Forward 10s"
+msgstr "Avancer de 10s"
+
+#: templates/controller.html:52
+msgid "Volume"
+msgstr "Volume"
+
+#: templates/controller.html:57
+msgid "Effect"
+msgstr "Effet"
+
+#: templates/controller.html:61 templates/queue.html:3
+msgid "Queue"
+msgstr "File d’attente"
+
+#: templates/footer.html:6
+msgid "Support"
+msgstr "Support"
+
+#: templates/footer.html:7
+msgid "Document"
+msgstr "Documentation"
+
+#: templates/footer.html:13
+msgid "Donation"
+msgstr "Don"
+
+#: templates/footer.html:18
+msgid "Votes"
+msgstr "Votes"
+
+#: templates/footer.html:23
+msgid "Legal"
+msgstr "Mentions légales"
+
+#: templates/footer.html:24
+msgid "Privacy Policy"
+msgstr "Politique de confidentialité"
+
+#: templates/footer.html:25
+msgid "Terms Of Service"
+msgstr "Conditions d'utilisation"
+
+#: templates/header.html:13
+msgid "Search your input and add it to the queue"
+msgstr "Recherchez votre saisie et ajoutez-la à la file"
+
+#: templates/header.html:20
+msgid "Add All"
+msgstr "Tout ajouter"
+
+#: templates/header.html:31 templates/header.html:36
+msgid "Inbox"
+msgstr "Boîte de réception"
+
+#: templates/header.html:41 templates/index.html:69
+msgid "No message for you at this time."
+msgstr "Aucun message pour vous pour le moment."
+
+#: templates/header.html:54 templates/index.html:370
+msgid "Settings"
+msgstr "Paramètres"
+
+#: templates/header.html:57
+msgid "Help"
+msgstr "Aide"
+
+#: templates/header.html:60
+msgid "Logout"
+msgstr "Déconnexion"
+
+#: templates/index.html:44
+msgid "Cancel"
+msgstr "Annuler"
+
+#: templates/index.html:45
+msgid "Confirm"
+msgstr "Confirmer"
+
+#: templates/index.html:46
+msgid "Accept"
+msgstr "Accepter"
+
+#: templates/index.html:47
+msgid "Link copied to clipboard"
+msgstr "Lien copié dans le presse-papiers"
+
+#: templates/index.html:48
+#, python-brace-format
+msgid "Added {0} into the queue."
+msgstr "Ajouté {0} dans la file d'attente."
+
+#: templates/index.html:49
+#, python-brace-format
+msgid "Added {0} songs into the queue."
+msgstr "Ajouté {0} chansons dans la file d'attente."
+
+#: templates/index.html:50
+msgid "Paused the player."
+msgstr "Lecture mise en pause."
+
+#: templates/index.html:51
+msgid "Resumed the player."
+msgstr "Lecture reprise."
+
+#: templates/index.html:52
+#, python-brace-format
+msgid "Forward the player to {0}."
+msgstr "Avancé le lecteur à {0}."
+
+#: templates/index.html:53
+#, python-brace-format
+msgid "Rewind the player to {0}."
+msgstr "Rembobiné le lecteur à {0}."
+
+#: templates/index.html:54
+#, python-brace-format
+msgid "Set volume to {0}."
+msgstr "Volume réglé à {0}."
+
+#: templates/index.html:55
+#, python-brace-format
+msgid "{0} and {1} are swapped."
+msgstr "{0} et {1} sont échangés."
+
+#: templates/index.html:56
+#, python-brace-format
+msgid "Moved {0} to {1}."
+msgstr "{0} déplacé à {1}."
+
+#: templates/index.html:57
+#, python-brace-format
+msgid "Shuffled the {0}"
+msgstr "{0} mélangé."
+
+#: templates/index.html:58
+#, python-brace-format
+msgid "The repeat mode has been set to {0}"
+msgstr "Le mode répétition a été défini sur {0}."
+
+#: templates/index.html:59
+#, python-brace-format
+msgid "Removed {0} from the queue."
+msgstr "{0} retiré de la file d'attente."
+
+#: templates/index.html:60
+#, python-brace-format
+msgid "Removed {0} tracks from the queue."
+msgstr "{0} titres retirés de la file d'attente."
+
+#: templates/index.html:61
+#, python-brace-format
+msgid "Cleared {0} list."
+msgstr "Liste {0} vidée."
+
+#: templates/index.html:62
+#, python-brace-format
+msgid "Autoplay mode is now {0}."
+msgstr "Le mode lecture automatique est désormais {0}."
+
+#: templates/index.html:63
+msgid "enabled"
+msgstr "activé"
+
+#: templates/index.html:64
+msgid "disabled"
+msgstr "désactivé"
+
+#: templates/index.html:65
+msgid "Results found"
+msgstr "résultats trouvés"
+
+#: templates/index.html:67
+msgid "You are not able to select this bot!"
+msgstr "Vous ne pouvez pas sélectionner ce bot !"
+
+#: templates/index.html:68
+msgid "You need to connect a bot in order to perform this action."
+msgstr "Vous devez connecter un bot pour effectuer cette action."
+
+#: templates/index.html:70
+msgid "Add more songs to the queue before shuffling."
+msgstr "Ajoutez plus de morceaux à la file avant de mélanger."
+
+#: templates/index.html:73
+msgid "Keyboard Shortcuts"
+msgstr "Raccourcis clavier"
+
+#: templates/index.html:74
+msgid "Quick access to common actions"
+msgstr "Accès rapide aux actions courantes"
+
+#: templates/index.html:75 templates/queue.html:12
+msgid "Close"
+msgstr "Fermer"
+
+#: templates/index.html:77
+msgid "Navigation"
+msgstr "Don"
+
+#: templates/index.html:78
+msgid "Playback Controls"
+msgstr "Contrôles de lecture"
+
+#: templates/index.html:79
+msgid "Queue Management"
+msgstr "Mode de file"
+
+#: templates/index.html:82
+msgid "Show keyboard shortcuts"
+msgstr "Afficher les raccourcis clavier"
+
+#: templates/index.html:83
+msgid "Focus search bar"
+msgstr "Focaliser la barre de recherche"
+
+#: templates/index.html:84
+msgid "Play/Pause"
+msgstr "Lecture/Pause"
+
+#: templates/index.html:85
+msgid "Forward 10 seconds"
+msgstr "Avancer de 10s"
+
+#: templates/index.html:86
+msgid "Rewind 10 seconds"
+msgstr "Reculer de 10s"
+
+#: templates/index.html:87
+msgid "Previous track"
+msgstr "Retirer le titre"
+
+#: templates/index.html:88
+msgid "Next track"
+msgstr "Titre"
+
+#: templates/index.html:89
+msgid "Toggle repeat mode"
+msgstr "Activer/Désactiver le mode répétition"
+
+#: templates/index.html:90
+msgid "Toggle shuffle"
+msgstr "Lecture aléatoire"
+
+#: templates/index.html:94
+msgid "Track"
+msgstr "Titre"
+
+#: templates/index.html:95
+msgid "Recommendation for this song"
+msgstr "Recommandation pour ce morceau"
+
+#: templates/index.html:96
+msgid "Based on your song your picked"
+msgstr "Basé sur le morceau que vous avez choisi"
+
+#: templates/index.html:100
+msgid "Playlist name"
+msgstr "Nom de la playlist"
+
+#: templates/index.html:101
+msgid "e.g. My playlist"
+msgstr "ex : Ma playlist"
+
+#: templates/index.html:102
+msgid "Playlist type"
+msgstr "Type de playlist"
+
+#: templates/index.html:103
+msgid "Standard Playlist"
+msgstr "Playlist standard"
+
+#: templates/index.html:104
+msgid "Online Playlist"
+msgstr "Playlist en ligne"
+
+#: templates/index.html:105
+msgid "Playlist Url"
+msgstr "URL de la playlist"
+
+#: templates/index.html:106
+msgid "e.g. Youtube or Spotify playlist url"
+msgstr "ex : URL d'une playlist Youtube ou Spotify"
+
+#: templates/index.html:107
+msgid "Create"
+msgstr "Créer"
+
+#: templates/index.html:108
+msgid "Delete"
+msgstr "Supprimer"
+
+#: templates/index.html:111
+msgid "playlist"
+msgstr "playlist"
+
+#: templates/index.html:112
+msgid "share"
+msgstr "partager"
+
+#: templates/index.html:113
+msgid "link"
+msgstr "lien"
+
+#: templates/index.html:116 templates/menu.html:33
+msgid "Create Playlist"
+msgstr "Créer une playlist"
+
+#: templates/index.html:117
+msgid ""
+"Create and personalize your playlist for every mood, crafted exclusively "
+"by you."
+msgstr ""
+"Créez et personnalisez votre playlist pour chaque humeur, élaborée "
+"uniquement par vous."
+
+#: templates/index.html:120
+msgid "Rename Playlist"
+msgstr "Renommer la playlist"
+
+#: templates/index.html:121
+msgid ""
+"Allows you to change the name of your existing collections of songs for "
+"better organization."
+msgstr ""
+"Vous permet de renommer vos collections de morceaux afin de mieux vous "
+"organiser."
+
+#: templates/index.html:124
+msgid "Delete Playlist"
+msgstr "Supprimer la playlist"
+
+#: templates/index.html:125
+msgid "Enables the removal of unwanted collections of songs from your library."
+msgstr "Permet de supprimer des playlists non désirées de votre bibliothèque."
+
+#: templates/index.html:130
+msgid "Adjust the configurations on your server for an optimized experience."
+msgstr "Ajustez la configuration de votre serveur pour une expérience optimale."
+
+#: templates/index.html:131
+msgid "General"
+msgstr "Général"
+
+#: templates/index.html:132
+msgid "You are now listening in"
+msgstr "Vous écoutez actuellement dans"
+
+#: templates/index.html:133
+msgid "My Servers"
+msgstr "Mes serveurs"
+
+#: templates/index.html:134
+msgid "Please select a server whose settings you would like to modify"
+msgstr ""
+"Veuillez sélectionner un serveur dont vous souhaitez modifier les "
+"paramètres"
+
+#: templates/index.html:135
+msgid "Invite the Bot to Your Server"
+msgstr "Inviter le bot sur votre serveur"
+
+#: templates/index.html:136
+msgid "The bot is not currently a member of the following server"
+msgstr "Le bot n'est actuellement pas membre du serveur sélectionné."
+
+#: templates/index.html:137
+msgid "Careful — you have unsaved changes!"
+msgstr "Attention — vous avez des modifications non enregistrées !"
+
+#: templates/index.html:138
+msgid "Reset"
+msgstr "Réinitialiser"
+
+#: templates/index.html:139
+msgid "Save Changes"
+msgstr "Sauvegarder"
+
+#: templates/index.html:140
+msgid "Invite to this server"
+msgstr "Inviter sur ce serveur"
+
+#: templates/index.html:141
+msgid "members"
+msgstr "membres"
+
+#: templates/index.html:144
+msgid "Prefix"
+msgstr "Préfixe"
+
+#: templates/index.html:145
+msgid "Change the default prefix for message commands."
+msgstr "Changez le préfixe par défaut pour les commandes message."
+
+#: templates/index.html:148 templates/index.html:375
+msgid "Language"
+msgstr "Langue"
+
+#: templates/index.html:149
+msgid ""
+"You can choose your preferred language, the bot message will change to "
+"the language you set."
+msgstr ""
+"Vous pouvez choisir votre langue préférée, les messages du bot "
+"utiliseront cette langue."
+
+#: templates/index.html:152
+msgid "Queue Mode"
+msgstr "Mode de file"
+
+#: templates/index.html:153
+msgid "Change to another type of queue mode."
+msgstr "Changez pour un autre mode de file d'attente."
+
+#: templates/index.html:156
+msgid "DJ Role"
+msgstr "Rôle DJ"
+
+#: templates/index.html:157
+msgid "Set a DJ role or remove DJ role."
+msgstr "Définissez ou retirez le rôle de DJ."
+
+#: templates/index.html:160
+msgid "24/7 Mode"
+msgstr "Mode 24/7"
+
+#: templates/index.html:161
+msgid "Toggles 24/7 mode, which disables automatic inactivity-based disconnects."
+msgstr ""
+"Active/désactive le mode 24/7, qui empêche la déconnexion automatique en "
+"cas d'inactivité."
+
+#: templates/index.html:164
+msgid "Vote Bypass"
+msgstr "Ignorer le vote"
+
+#: templates/index.html:165
+msgid ""
+"Toggles in the voting system provide you the option to participate or "
+"abstain from voting to skip a song."
+msgstr "Permet de participer ou non au système de vote pour passer un morceau."
+
+#: templates/index.html:168
+msgid "Toggle Music Controller"
+msgstr "Contrôleur musical"
+
+#: templates/index.html:169
+msgid ""
+"Toggles to send a message when clicking the button in the music "
+"controller."
+msgstr ""
+"Active/désactive l'envoi d'un message lors de l'utilisation du contrôleur"
+" musical."
+
+#: templates/index.html:172
+msgid "Duplicate Track"
+msgstr "Titre en double"
+
+#: templates/index.html:173
+msgid "Toggle Vocard to prevent duplicate songs from queuing."
+msgstr "Empêche l'ajout de titres en double dans la file d'attente."
+
+#: templates/index.html:176
+msgid "Silent Message"
+msgstr "Message Silencieux"
+
+#: templates/index.html:177
+msgid "Toggle silent messaging to send messages without alerting."
+msgstr "Activer le mode silencieux pour envoyer des messages sans alerter."
+
+#: templates/index.html:180
+msgid "Voice Status Template"
+msgstr "Modèle de statut vocal"
+
+#: templates/index.html:181
+msgid "Customize the channel topic template (Displayed while playing music)."
+msgstr "Personnalisez le sujet du canal (affiché lors de l'écoute de la musique)."
+
+#: templates/index.html:185
+msgid "Enable Effect"
+msgstr "Activer un effet"
+
+#: templates/index.html:186
+msgid "Turn on the music sound effect."
+msgstr "Activer les effets audio."
+
+#: templates/index.html:187
+msgid "Reset all filter."
+msgstr "Réinitialiser tous les filtres."
+
+#: templates/index.html:188
+#, python-brace-format
+msgid "Applied {0} filter."
+msgstr "Filtre {0} appliqué."
+
+#: templates/index.html:189
+#, python-brace-format
+msgid "Removed {0} filter."
+msgstr "Filtre {0} retiré."
+
+#: templates/index.html:191
+msgid "None"
+msgstr "Aucun"
+
+#: templates/index.html:192
+msgid "karaoke"
+msgstr "karaoké"
+
+#: templates/index.html:193
+msgid "tremolo"
+msgstr "trémolo"
+
+#: templates/index.html:194
+msgid "vibrato"
+msgstr "vibrato"
+
+#: templates/index.html:195
+msgid "rotation"
+msgstr "rotation"
+
+#: templates/index.html:196
+msgid "distortion"
+msgstr "distorsion"
+
+#: templates/index.html:197
+msgid "lowpass"
+msgstr "filtre passe-bas"
+
+#: templates/index.html:198
+msgid "nightcore"
+msgstr "nightcore"
+
+#: templates/index.html:199
+msgid "8D"
+msgstr "8D"
+
+#: templates/index.html:200
+msgid "vaporwave"
+msgstr "vaporwave"
+
+#: templates/index.html:204
+msgid "Play now"
+msgstr "Jouer maintenant"
+
+#: templates/index.html:205
+msgid "Play next"
+msgstr "Lire ensuite"
+
+#: templates/index.html:206
+msgid "Add to queue"
+msgstr "Ajouter à la file"
+
+#: templates/index.html:207
+msgid "Remove from queue"
+msgstr "Retirer de la file"
+
+#: templates/index.html:208
+msgid "Skip to"
+msgstr "Passer à"
+
+#: templates/index.html:209
+msgid "Back to"
+msgstr "Retour à"
+
+#: templates/index.html:210
+msgid "Move to top"
+msgstr "Mettre en haut"
+
+#: templates/index.html:211
+msgid "Move to bottom"
+msgstr "Mettre en bas"
+
+#: templates/index.html:212
+msgid "Copy link"
+msgstr "Copier le lien"
+
+#: templates/index.html:213
+msgid "Recommendation"
+msgstr "Recommandation"
+
+#: templates/index.html:214
+msgid "Get lyrics"
+msgstr "Obtenir les paroles"
+
+#: templates/index.html:215
+msgid "Play shuffle"
+msgstr "Lecture aléatoire"
+
+#: templates/index.html:216
+msgid "Remove track"
+msgstr "Retirer le titre"
+
+#: templates/index.html:217
+msgid "Add to playlist"
+msgstr "Ajouter à la playlist"
+
+#: templates/index.html:241
+msgid "Some errors occurred and the dashboard could not be connected"
+msgstr "Des erreurs sont survenues et le tableau de bord n’a pas pu se connecter."
+
+#: templates/index.html:246
+msgid "Can't Find You on Discord"
+msgstr "Impossible de vous trouver sur Discord"
+
+#: templates/index.html:248
+msgid ""
+"I'm unable to locate you in any Discord server. Please check that you've "
+"invited our bot and granted it the necessary\n"
+"                            permissions to access your server information."
+msgstr ""
+"Je n’ai pas pu vous localiser sur un serveur Discord. Veuillez vérifier "
+"que le bot a été invité sur le serveur et dispose des autorisations "
+"nécessaires."
+
+#: templates/index.html:254 templates/index.html:302
+msgid "Reload Page"
+msgstr "Recharger la page"
+
+#: templates/index.html:261
+msgid "No Hisotry Searches Found"
+msgstr "Aucune recherche récente trouvée"
+
+#: templates/index.html:263
+msgid ""
+"It seems like you haven't searched for any songs yet. No worries, your "
+"musical journey can start right now! Simply enter the\n"
+"                            name of your favorite song or artist in the "
+"search bar."
+msgstr ""
+"Il semble que vous n’ayez encore rien recherché. Votre aventure musicale "
+"commence maintenant ! Saisissez simplement le nom d’une chanson ou d’un "
+"artiste dans la barre de recherche."
+
+#: templates/index.html:268
+msgid "Search Now"
+msgstr "Rechercher"
+
+#: templates/index.html:274
+msgid "Server Not Detected"
+msgstr "Aucun serveur détecté"
+
+#: templates/index.html:276
+msgid ""
+"Ensure that I'm added to your server. Please note, you must possess "
+"'Manage Guild' permissions on the server you wish to\n"
+"                            manage."
+msgstr ""
+"Veuillez vérifier que le bot a bien été ajouté à votre serveur et que "
+"vous disposez de la permission 'Gérer le serveur'."
+
+#: templates/index.html:281
+msgid "Refresh page"
+msgstr "Rafraîchir la page"
+
+#: templates/index.html:287
+msgid "Lyrics Not Found"
+msgstr "Paroles non trouvées"
+
+#: templates/index.html:288
+msgid ""
+"Sorry, but I'm unable to search for the lyrics of this song. Please try "
+"searching online."
+msgstr ""
+"Désolé, je ne peux pas trouver les paroles de cette chanson. Essayez de "
+"les chercher en ligne."
+
+#: templates/index.html:294
+msgid "Temporary Access Limit Reached"
+msgstr "Limite d'accès temporaire atteinte"
+
+#: templates/index.html:296
+msgid ""
+"It appears you've been quite active and have reached the limit for "
+"requests. Don't worry, this is only temporary. You'll be\n"
+"                            able to continue your activities after a "
+"short break."
+msgstr ""
+"Vous semblez très actif et avez atteint la limite de requêtes. Pas "
+"d’inquiétude, c’est temporaire : vous pourrez bientôt reprendre vos "
+"activités après une courte pause."
+
+#: templates/index.html:310
+msgid "Recently played"
+msgstr "Dernières écoutes"
+
+#: templates/index.html:330
+msgid "Based on your song playback history"
+msgstr "Basé sur votre historique d’écoute"
+
+#: templates/index.html:331
+msgid "Recommendation for today"
+msgstr "Recommandation du jour"
+
+#: templates/index.html:345
+msgid "Top 50 Global Hits"
+msgstr "Top 50 des hits mondiaux"
+
+#: templates/index.html:346
+msgid "Trending Songs"
+msgstr "Chansons tendance"
+
+#: templates/index.html:369
+msgid "Manage your account settings and preferences"
+msgstr "Gérez les paramètres et préférences de votre compte"
+
+#: templates/index.html:376
+msgid "Default language for public dashboard."
+msgstr "Langue par défaut pour le tableau de bord public."
+
+#: templates/index.html:395
+msgid "Dark Mode"
+msgstr "Mode sombre"
+
+#: templates/index.html:396
+msgid "Quickly toggle between light and dark modes for a personalized."
+msgstr "Passez rapidement du mode clair au mode sombre."
+
+#: templates/menu.html:16
+msgid "Home"
+msgstr "Accueil"
+
+#: templates/menu.html:21
+msgid "Explore"
+msgstr "Explorer"
+
+#: templates/menu.html:26
+msgid "Server"
+msgstr "Serveur"
+
+#: templates/queue.html:8
+msgid "Toggle History"
+msgstr "Afficher l’historique"
+
+#: templates/queue.html:19
+msgid "Now playing"
+msgstr "En lecture"
+
+#: templates/queue.html:37
+msgid "Next in queue"
+msgstr "Suivant dans la file"
+
+#: templates/queue.html:38
+msgid "Clear queue"
+msgstr "Vider la file"
+
+#: templates/queue.html:44
+msgid "History queue"
+msgstr "Historique de la file"
+
+#: templates/queue.html:45
+msgid "Clear history"
+msgstr "Vider l’historique"
+
+#: templates/queue.html:51
+msgid "BACK TO TOP"
+msgstr "RETOUR EN HAUT"
+
+#: templates/queue.html:55
+msgid "Autoplay"
+msgstr "lecture auto"
+

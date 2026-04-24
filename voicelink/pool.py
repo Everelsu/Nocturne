@@ -26,6 +26,7 @@ from __future__ import annotations
 import asyncio
 import os
 import re
+import time
 import aiohttp
 import logging
 
@@ -51,6 +52,7 @@ from .objects import Playlist, Track
 from .utils import ExponentialBackoff, NodeStats, NodeInfo, Ping
 from .enums import RequestMethod
 from .ratelimit import YTRatelimit, YTToken, STRATEGY
+from .config import Config
 
 if TYPE_CHECKING:
     from .player import Player
@@ -91,11 +93,15 @@ class Node:
         self._heartbeat: int = heartbeat
         self._secure: bool = secure
         self._logger: Optional[logging.Logger] = logger
+        self._stats: Optional[NodeStats] = None
 
         self._websocket_uri: str = f"{'wss' if self._secure else 'ws'}://{self._host}:{self._port}/" + NODE_VERSION + "/websocket"
         self._rest_uri: str = f"{'https' if self._secure else 'http'}://{self._host}:{self._port}"
 
-        self._session: aiohttp.ClientSession = session or aiohttp.ClientSession()
+        self._session: aiohttp.ClientSession = session or aiohttp.ClientSession(
+            connector=aiohttp.TCPConnector(limit=100, ttl_dns_cache=300, enable_cleanup_closed=True),
+            timeout=aiohttp.ClientTimeout(total=30, connect=10, sock_read=15),
+        )
         self._websocket: aiohttp.ClientWebSocketResponse = None
         self._task: asyncio.Task = None
 
@@ -112,6 +118,8 @@ class Node:
 
         self._players: Dict[int, Player] = {}
         self._info: Optional[NodeInfo] = None
+        self._cached_latency: float = 0.0
+        self._latency_checked_at: float = 0.0
         
         self.yt_ratelimit: Optional[YTRatelimit] = STRATEGY.get(yt_ratelimit.get("strategy"))(self, yt_ratelimit) if yt_ratelimit and yt_ratelimit.get("tokens") else None
 
@@ -160,8 +168,15 @@ class Node:
 
     @property
     def latency(self) -> float:
-        """Property which returns the latency of the node"""
-        return Ping(self._host, port=self._port).get_ping()
+        """Property which returns the latency of the node (cached 30s TTL)."""
+        now = time.monotonic()
+        if now - self._latency_checked_at > 30:
+            try:
+                self._cached_latency = Ping(self._host, port=self._port).get_ping()
+            except Exception:
+                self._cached_latency = 9999.0
+            self._latency_checked_at = now
+        return self._cached_latency
 
     async def _update_handler(self, data: dict) -> None:
         await self._bot.wait_until_ready()
@@ -195,7 +210,7 @@ class Node:
             try:
                 msg = await self._websocket.receive()
 
-                if msg.type == aiohttp.WSMsgType.CLOSED:
+                if msg.type in (aiohttp.WSMsgType.CLOSED, aiohttp.WSMsgType.CLOSING):
                     self._available = False
                     self._logger.warning(f"WebSocket closed for node [{self._identifier}]")
                     break
@@ -203,8 +218,12 @@ class Node:
                 elif msg.type == aiohttp.WSMsgType.ERROR:
                     self._logger.error(f"WebSocket error for node [{self._identifier}]")
                     break
-                
-                self._bot.loop.create_task(self._handle_payload(msg.json()))
+
+                elif msg.type in (aiohttp.WSMsgType.PING, aiohttp.WSMsgType.PONG):
+                    continue
+
+                elif msg.type == aiohttp.WSMsgType.TEXT:
+                    self._bot.loop.create_task(self._handle_payload(msg.json()))
 
             except aiohttp.ClientConnectionError as e:
                 self._logger.error(f"Connection error: {e}")
@@ -258,8 +277,14 @@ class Node:
             json=data
         ) as resp:
             if resp.status >= 300:
-                raise NodeException(f"Getting errors from Lavalink REST api")
-            
+                try:
+                    body = await resp.json(content_type=None)
+                    msg = body.get("message", body) if isinstance(body, dict) else body
+                except Exception:
+                    msg = await resp.text()
+                self._logger.debug(f"Lavalink REST error {resp.status} for {query}: {msg}")
+                raise NodeException(f"Lavalink error {resp.status}: {msg}")
+
             if method == RequestMethod.DELETE:
                 return await resp.json(content_type=None)
 
@@ -353,7 +378,7 @@ class Node:
         query: str,
         *,
         requester: Member,
-        search_type: SearchType = SearchType.YOUTUBE
+        search_type: SearchType = None
     ) -> Union[List[Track], Playlist]:
         """
         Fetches tracks from the node's REST api to parse into Lavalink.
@@ -361,7 +386,9 @@ class Node:
         You can also pass in a discord.py Context object to get a
         Context object on any track you search.
         """
-
+        if not search_type:
+            search_type = Config().search_platform
+            
         if not URL_REGEX.match(query) and ':' not in query:
             query = f"{search_type}:{query}"
 
@@ -386,26 +413,6 @@ class Node:
 
         elif load_type == "track":
             return [Track(track_id=data["encoded"], info=data["info"], requester=requester)]
-
-    async def get_recommendations(self, track: Track, limit: int = 20) -> List[Optional[Track]]:
-        query = ""
-        if track.source == "youtube":
-            query = f"https://www.youtube.com/watch?v={track.identifier}&list=RD{track.identifier}"
-
-        elif track.source == "spotify":
-            query = f"sprec:seed_tracks={track.identifier}"
-
-        if not query:
-            return []
-        
-        tracks = await self.get_tracks(query=query, requester=self.bot.user)
-        if not track:
-            return []
-        
-        if isinstance(tracks, Playlist):
-            tracks = tracks.tracks
-
-        return tracks[:limit] if limit else tracks
     
     async def update_refresh_yt_access_token(self, token: YTToken) -> dict:
         if not self._available:
@@ -509,7 +516,7 @@ class NodePool:
             raise NodeCreationError(f"A node with identifier '{identifier}' already exists.")
         
         if not logger:
-            logger = logging.getLogger("voicelink")
+            logger = logging.getLogger("vocard")
             
         node = Node(
             pool=cls, bot=bot, host=host, port=port, password=password,

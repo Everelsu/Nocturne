@@ -1,0 +1,70 @@
+{% block header %}
+<div class="header-container">
+
+    <a class="nocturne-logo" href="." title="Nocturne">
+        <span class="logo-text">Nocturne</span>
+    </a>
+
+    <div class="menu-bar-btn" id="menu-bar-btn">
+        <span class="material-symbols-outlined clickable">menu</span>
+    </div>
+
+    <div class="search-container">
+        <div class="back-page-btn" id="back-page-btn">
+            <span class="material-symbols-outlined clickable">arrow_back</span>
+        </div>
+        <div class="search-bar">
+            <span class="search-prefix" style="font-size:0.65rem;color:var(--primary);letter-spacing:0.05em;flex-shrink:0;opacity:0.7;">//</span>
+            <span class="material-symbols-outlined">search</span>
+            <input type="text" id="search-query" placeholder="{{ _('Search and add to queue') }}" />
+            <div class="loader" id="search-loader" style="display: none"></div>
+            <div class="search-result">
+                <div class="header">
+                    <h4 id="result-count"></h4>
+                    <div class="btn" id="add-all-tracks-btn">
+                        <span class="material-symbols-outlined">add</span>
+                        <p>{{ _("Add All") }}</p>
+                    </div>
+                </div>
+                <div class="tracks" id="search-result-tracks"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-btn">
+        <div class="btn" id="toggle-inbox-panel">
+            <span class="material-symbols-outlined filled">inbox</span>
+            <p class="label">{{ _("Inbox") }}</p>
+        </div>
+        <div class="panel" id="inbox-panel">
+            <div class="header">
+                <span class="material-symbols-outlined filled">inbox</span>
+                <h3>{{ _("Inbox") }}</h3>
+            </div>
+            <div class="sections">
+                <div class="no-message">
+                    <img src="/static/img/noMessage.svg" alt />
+                    <p>{{ _("No message for you at this time.") }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="user-menu-container">
+        <div class="user-avatar" id="toggle-user-menu">
+            <img src="{{ user.avatar.url }}" alt />
+        </div>
+        <div class="panel user-menu-panel" id="user-menu">
+            <ul>
+                <li id="load-settings-page-btn">
+                    <a href="#"><span class="material-symbols-outlined">settings</span>{{ _("Settings") }}</a>
+                </li>
+<li>
+                    <a href="logout" class="logout-link"><span class="material-symbols-outlined">logout</span>{{ _("Logout") }}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

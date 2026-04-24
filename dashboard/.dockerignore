@@ -1,0 +1,13 @@
+.git/
+.gitignore
+.DS_Store
+*.md
+settings.json
+.env
+logs/
+geolite_db/
+static/css/
+static/js/
+__pycache__/
+**/__pycache__/
+*.pyc

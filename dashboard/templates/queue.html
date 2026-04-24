@@ -1,0 +1,57 @@
+<div class="queue-container">
+    <div class="header small-padding">
+        <h3 class="active">{{ _("Queue") }}</h3>
+        <div class="avatar-container" id="channel-members"></div>
+        <div class="actions">
+            <div class="btn">
+                <span class="material-symbols-outlined clickable" id="toggle-history-list">history</span>
+                <p class="label">{{ _("Toggle History") }}</p>
+            </div>
+            <div class="btn active">
+                <span class="material-symbols-outlined clickable" id="toggle-queue-view2">close</span>
+                <p class="label">{{ _("Close") }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="scrollbar">
+        <div class="section" id="now-playing-section" style="display: none">
+            <div class="header">
+                <h4>{{ _("Now playing") }}</h4>
+            </div>
+            <div class="track show">
+                <div class="left">
+                    <div class="thumbnail">
+                        <img class="track-img" id="now-playing-img" src alt />
+                        <img class="requester-img" id="now-playing-requester-img" src alt />
+                    </div>
+                    <div class="track-info">
+                        <p class="title" id="now-playing-title"></p>
+                        <p class="description" id="now-playing-description"></p>
+                    </div>
+                </div>
+                <span class="material-symbols-outlined clickable">more_horiz</span>
+            </div>
+        </div>
+        <div class="section" id="play-next-section" style="display: none">
+            <div class="header">
+                <h4>{{ _("Next in queue") }}</h4>
+                <p id="clear-queue-btn">{{ _("Clear queue") }}</p>
+            </div>
+            <div class="queue" id="queue"></div>
+        </div>
+        <div class="section" id="history-section" style="display: none">
+            <div class="header">
+                <h4>{{ _("History queue") }}</h4>
+                <p id="clear-history-queue-btn">{{ _("Clear history") }}</p>
+            </div>
+            <div class="queue" id="history-queue"></div>
+        </div>
+        <div class="action-bar" id="queue-scroll-to-top">
+            <span class="material-symbols-outlined">keyboard_arrow_up</span>
+            <p>{{ _("BACK TO TOP") }}</p>
+        </div>
+    </div>
+    <div class="autoplay-btn" id="autoplay-btn">
+        <p>{{ _("Autoplay") }}</p>
+    </div>
+</div>

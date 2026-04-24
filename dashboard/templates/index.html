@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="{{ session.get('language_code', user.language_code) }}">
+    <head>
+        <meta charset="UTF-16" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}" />
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard-style.css') }}" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/nocturne-theme.css') }}" />
+
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Roboto+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,900;1,300;1,400;1,600;1,700;1,900&display=swap"
+            rel="stylesheet"
+        />
+
+        <script
+            src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+            crossorigin="anonymous"
+        ></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
+
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.4.0/color-thief.min.js"
+            integrity="sha512-r2yd2GP87iHAsf2K+ARvu01VtR7Bs04la0geDLbFlB/38AruUbA5qfmtXwXx6FZBQGJRogiPtEqtfk/fnQfaYA=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        ></script>
+
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+            integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        />
+
+        <script>
+            // const userId = "{{ user.id }}";
+            const localeTexts = {
+                cancel: "{{ _('Cancel') }}",
+                confirm: "{{ _('Confirm') }}",
+                accept: "{{ _('Accept') }}",
+                copyLink: "{{ _('Link copied to clipboard') }}",
+                addTrack: "{{ _('Added {0} into the queue.') }}",
+                addMultipleTrack: "{{ _('Added {0} songs into the queue.') }}",
+                paused: "{{ _('Paused the player.') }}",
+                resumed: "{{ _('Resumed the player.') }}",
+                forward: "{{ _('Forward the player to {0}.') }}",
+                rewind: "{{ _('Rewind the player to {0}.') }}",
+                volume: "{{ _('Set volume to {0}.') }}",
+                swapTrack: "{{ _('{0} and {1} are swapped.') }}",
+                moveTrack: "{{ _('Moved {0} to {1}.') }}",
+                shuffleTracks: "{{ _('Shuffled the {0}') }}",
+                repeatTrack: "{{ _('The repeat mode has been set to {0}') }}",
+                removeTrack: "{{ _('Removed {0} from the queue.') }}",
+                removeMultiple: "{{ _('Removed {0} tracks from the queue.') }}",
+                clearQueue: "{{ _('Cleared {0} list.') }}",
+                autoplay: "{{ _('Autoplay mode is now {0}.') }}",
+                enabled: "{{ _('enabled') }}",
+                disabled: "{{ _('disabled') }}",
+                resultsFoundCount: "{{ _('Results found') }}",
+                errors: {
+                    selectBotError: "{{ _('You are not able to select this bot!') }}",
+                    noPlayerError: "{{ _('You need to connect a bot in order to perform this action.') }}",
+                    noInboxMessage: "{{ _('No message for you at this time.') }}",
+                    noEnoughTrackToShuffle: "{{ _('Add more songs to the queue before shuffling.') }}",
+                },
+                shortcuts: {
+                    title: "{{ _('Keyboard Shortcuts') }}",
+                    description: "{{ _('Quick access to common actions') }}",
+                    close: "{{ _('Close') }}",
+                    categories: {
+                        navigation: "{{ _('Navigation') }}",
+                        playbackControls: "{{ _('Playback Controls') }}",
+                        queueManagement: "{{ _('Queue Management') }}",
+                    },
+                    items: {
+                        showShortcuts: "{{ _('Show keyboard shortcuts') }}",
+                        focusSearch: "{{ _('Focus search bar') }}",
+                        playPause: "{{ _('Play/Pause') }}",
+                        forward10s: "{{ _('Forward 10 seconds') }}",
+                        rewind10s: "{{ _('Rewind 10 seconds') }}",
+                        previousTrack: "{{ _('Previous track') }}",
+                        nextTrack: "{{ _('Next track') }}",
+                        toggleRepeat: "{{ _('Toggle repeat mode') }}",
+                        toggleShuffle: "{{ _('Toggle shuffle') }}",
+                    },
+                },
+                track: {
+                    track: "{{ _('Track') }}",
+                    title: "{{ _('Recommendation for this song') }}",
+                    description: "{{ _('Based on your song your picked') }}",
+                },
+                playlist: {
+                    variable: {
+                        name: "{{ _('Playlist name') }}",
+                        namePlaceholder: "{{ _('e.g. My playlist') }}",
+                        type: "{{ _('Playlist type') }}",
+                        standard: "{{ _('Standard Playlist') }}",
+                        online: "{{ _('Online Playlist') }}",
+                        url: "{{ _('Playlist Url') }}",
+                        urlPlaceholder: "{{ _('e.g. Youtube or Spotify playlist url') }}",
+                        create: "{{ _('Create') }}",
+                        delete: "{{ _('Delete') }}",
+                    },
+                    type: {
+                        playlist: "{{ _('playlist') }}",
+                        share: "{{ _('share') }}",
+                        link: "{{ _('link') }}",
+                    },
+                    create: {
+                        title: "{{ _('Create Playlist') }}",
+                        description: "{{ _('Create and personalize your playlist for every mood, crafted exclusively by you.') }}",
+                    },
+                    rename: {
+                        title: "{{ _('Rename Playlist') }}",
+                        description: "{{ _('Allows you to change the name of your existing collections of songs for better organization.') }}",
+                    },
+                    delete: {
+                        title: "{{ _('Delete Playlist') }}",
+                        description: "{{ _('Enables the removal of unwanted collections of songs from your library.') }}",
+                    },
+                },
+                settings: {
+                    variable: {
+                        headerDescription: "{{ _('Adjust the configurations on your server for an optimized experience.') }}",
+                        general: "{{ _('General') }}",
+                        header1: "{{ _('You are now listening in') }}",
+                        header2: "{{ _('My Servers') }}",
+                        description2: "{{ _('Please select a server whose settings you would like to modify') }}",
+                        header3: "{{ _('Invite the Bot to Your Server') }}",
+                        description3: "{{ _('The bot is not currently a member of the following server') }}",
+                        barTitle: "{{ _('Careful — you have unsaved changes!') }}",
+                        barAction1: "{{ _('Reset') }}",
+                        barAction2: "{{ _('Save Changes') }}",
+                        inviteText: "{{ _('Invite to this server') }}",
+                        membersText: "{{ _('members') }}",
+                    },
+                    prefix: {
+                        title: "{{ _('Prefix') }}",
+                        description: "{{ _('Change the default prefix for message commands.') }}",
+                    },
+                    language: {
+                        title: "{{ _('Language') }}",
+                        description: "{{ _('You can choose your preferred language, the bot message will change to the language you set.') }}",
+                    },
+                    queueType: {
+                        title: "{{ _('Queue Mode') }}",
+                        description: "{{ _('Change to another type of queue mode.') }}",
+                    },
+                    dj: {
+                        title: "{{ _('DJ Role') }}",
+                        description: "{{ _('Set a DJ role or remove DJ role.') }}",
+                    },
+                    _247: {
+                        title: "{{ _('24/7 Mode') }}",
+                        description: "{{ _('Toggles 24/7 mode, which disables automatic inactivity-based disconnects.') }}",
+                    },
+                    voteDisable: {
+                        title: "{{ _('Vote Bypass') }}",
+                        description: "{{ _('Toggles in the voting system provide you the option to participate or abstain from voting to skip a song.') }}",
+                    },
+                    controllerMsg: {
+                        title: "{{ _('Toggle Music Controller') }}",
+                        description: "{{ _('Toggles to send a message when clicking the button in the music controller.') }}",
+                    },
+                    duplicateTrack: {
+                        title: "{{ _('Duplicate Track') }}",
+                        description: "{{ _('Prevent duplicate songs from being added to the queue.') }}",
+                    },
+                    silentMsg: {
+                        title: "{{ _('Silent Message') }}",
+                        description: "{{ _('Toggle silent messaging to send messages without alerting.') }}"
+                    },
+                    stageAnnounceTemplate: {
+                        title: "{{ _('Voice Status Template') }}",
+                        description: "{{ _('Customize the channel topic template (Displayed while playing music).') }}",
+                    },
+                },
+                effects: {
+                    header: "{{ _('Enable Effect') }}",
+                    description: "{{ _('Turn on the music sound effect.') }}",
+                    reset: "{{ _('Reset all filter.') }}",
+                    add: "{{ _('Applied {0} filter.') }}",
+                    remove: "{{ _('Removed {0} filter.') }}",
+                    tags: {
+                        none: "{{ _('None') }}",
+                        karaoke: "{{ _('karaoke') }}",
+                        tremolo: "{{ _('tremolo') }}",
+                        vibrato: "{{ _('vibrato') }}",
+                        rotation: "{{ _('rotation') }}",
+                        distortion: "{{ _('distortion') }}",
+                        lowpass: "{{ _('lowpass') }}",
+                        nightcore: "{{ _('nightcore') }}",
+                        eightD: "{{ _('8D') }}",
+                        vaporwave: "{{ _('vaporwave') }}",
+                    },
+                },
+                context: {
+                    playNow: "{{ _('Play now') }}",
+                    playNext: "{{ _('Play next') }}",
+                    addToQueue: "{{ _('Add to queue') }}",
+                    removeFromQueue: "{{ _('Remove from queue') }}",
+                    skipTo: "{{ _('Skip to') }}",
+                    backTo: "{{ _('Back to') }}",
+                    moveToTop: "{{ _('Move to top') }}",
+                    moveToBottom: "{{ _('Move to bottom') }}",
+                    copyLink: "{{ _('Copy link') }}",
+                    recommendation: "{{ _('Recommendation') }}",
+                    getLyrics: "{{ _('Get lyrics') }}",
+                    playShuffle: "{{ _('Play shuffle') }}",
+                    removeTrack: "{{ _('Remove track') }}",
+                    addToPlaylist: "{{ _('Add to playlist') }}",
+                },
+            }
+        </script>
+
+        <script type="text/javascript" src="{{ url_for('static', filename='js/utils.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/websocket.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/objects.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/action.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/transformer.min.js') }}"></script>
+        <script>
+        // ── status bar wiring ──
+        (function(){
+            function setStatus(key, state, label){
+                var dot = document.getElementById('status-dot-' + key);
+                var val = document.getElementById('status-val-' + key);
+                if(!dot || !val) return;
+                dot.className = 'status-dot ' + state;
+                val.className = 'status-val ' + state;
+                val.textContent = label;
+            }
+
+            // hook into existing updateWarningBar
+            var _orig = window.updateWarningBar;
+            window.updateWarningBar = function(show){
+                if(_orig) _orig(show);
+                if(show){
+                    setStatus('srv', 'offline', 'OFFLINE');
+                    setStatus('ipc', '', '—');
+                    setStatus('node', '', '—');
+                } else {
+                    setStatus('srv', 'online', 'ONLINE');
+                }
+            };
+
+            // after page ready, update IPC/NODE from player object if available
+            document.addEventListener('DOMContentLoaded', function(){
+                setTimeout(function tick(){
+                    var p = window.player;
+                    if(p){
+                        // IPC
+                        var ipcOk = p.socket && p.socket.socket && p.socket.socket.readyState === 1;
+                        setStatus('ipc', ipcOk ? 'online' : 'offline', ipcOk ? 'OK' : 'DOWN');
+                        // Node / bot
+                        var hasBot = !!p.selectedBot;
+                        setStatus('node', hasBot ? 'online' : 'warn', hasBot ? 'ACTIVE' : 'IDLE');
+                    }
+                    setTimeout(tick, 5000);
+                }, 2000);
+            });
+        })();
+        </script>
+
+        <title>Nocturne</title>
+    </head>
+
+    <body>
+        <div id="screen-loader">
+            <div class="loader"></div>
+        </div>
+        <div class="main-grid-container">
+            {% include "header.html" %} {% include "menu.html" %}
+            <div id="menu-overlay" class="mobile-overlay"></div>
+            <div class="main-container">
+                <div class="warning-bar">
+                    <div class="loader" style="width: 14px"></div>
+                    <p>{{ _("Some errors occurred and the dashboard could not be connected") }}</p>
+                </div>
+                <div class="sections error-container" id="bot-not-found">
+                    <img src="{{ url_for('static', filename='img/not-found.svg') }}" alt />
+                    <div class="message">
+                        <h3>{{ _("Can't Find You on Discord") }}</h3>
+                        <p>
+                            {{ _("I'm unable to locate you in any Discord server. Please check that you've invited our bot and granted it the necessary
+                            permissions to access your server information.") }}
+                        </p>
+                    </div>
+                    <a href=".">
+                        <div class="reload-btn">
+                            <p>{{ _("Reload Page") }}</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="sections error-container" id="no-history-found">
+                    <img src="{{ url_for('static', filename='img/no-history.svg') }}" alt />
+                    <div class="message">
+                        <h3>{{ _("No History Found") }}</h3>
+                        <p>
+                            {{ _("It seems like you haven't searched for any songs yet. No worries, your musical journey can start right now! Simply enter the
+                            name of your favorite song or artist in the search bar.") }}
+                        </p>
+                    </div>
+                    <div class="reload-btn" id="focus-search-query">
+                        <p>{{ _("Search Now") }}</p>
+                    </div>
+                </div>
+                <div class="sections error-container" id="no-server-found">
+                    <img src="{{ url_for('static', filename='img/no-servers.svg') }}" alt />
+                    <div class="message">
+                        <h3>{{ _("Server Not Detected") }}</h3>
+                        <p>
+                            {{ _("Ensure that I'm added to your server. Please note, you must possess 'Manage Guild' permissions on the server you wish to
+                            manage.") }}
+                        </p>
+                    </div>
+                    <div class="reload-btn" id="reload-settings-page-btn">
+                        <p>{{ _("Refresh page") }}</p>
+                    </div>
+                </div>
+                <div class="sections error-container" id="no-lyrics-found">
+                    <img src="{{ url_for('static', filename='img/no-history.svg') }}" alt />
+                    <div class="message">
+                        <h3>{{ _("Lyrics Not Found") }}</h3>
+                        <p>{{ _("Sorry, but I'm unable to search for the lyrics of this song. Please try searching online.") }}</p>
+                    </div>
+                </div>
+                <div class="sections error-container" id="rate-limited">
+                    <img src="{{ url_for('static', filename='img/rate-limited.svg') }}" alt />
+                    <div class="message">
+                        <h3>{{ _("Temporary Access Limit Reached") }}</h3>
+                        <p>
+                            {{ _("It appears you've been quite active and have reached the limit for requests. Don't worry, this is only temporary. You'll be
+                            able to continue your activities after a short break.") }}
+                        </p>
+                    </div>
+                    <a href=".">
+                        <div class="reload-btn">
+                            <p>{{ _("Reload Page") }}</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="sections" id="main-page">
+                    <div class="section">
+                        <div class="header">
+                            <div class="sub-title">
+                                <h2>{{ _("Recently played") }}</h2>
+                            </div>
+                        </div>
+                        <div class="card-container" id="history-tracks">
+                            {% for i in range(10) %}
+                            <div class="card skeleton">
+                                <div class="thumbnail">
+                                    <img alt />
+                                </div>
+                                <div class="track-info">
+                                    <p class="title"></p>
+                                    <p class="description"></p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="section">
+                        <div class="header">
+                            <div class="sub-title">
+                                <p>{{ _("Based on your song playback history") }}</p>
+                                <h2>{{ _("Recommendation for today") }}</h2>
+                            </div>
+                        </div>
+                        <div class="card-container recommendation-tracks" id="recommendation-tracks"></div>
+                        <div class="center">
+                            <div class="loader" id="recommendation-tracks-loader"></div>
+                        </div>
+                    </div>
+                    {% include "footer.html" %}
+                </div>
+                <div class="sections" id="explore-page">
+                    <div class="section">
+                        <div class="header">
+                            <div class="sub-title">
+                                <p>{{ _("Top 50 Global Hits") }}</p>
+                                <h2>{{ _("Trending Songs") }}</h2>
+                            </div>
+                        </div>
+                        <div class="card-container" id="global-top-tracks">
+                            {% for i in range(10) %}
+                            <div class="card skeleton">
+                                <div class="thumbnail">
+                                    <img alt />
+                                </div>
+                                <div class="track-info">
+                                    <p class="title"></p>
+                                    <p class="description"></p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% include "footer.html" %}
+                </div>
+                <div class="sections" id="user-settings-page">
+                    <div class="section">
+                        <div class="header">
+                            <div class="sub-title">
+                                <p>{{ _("Manage your account settings and preferences") }}</p>
+                                <h2>{{ _("Settings") }}</h2>
+                            </div>
+                        </div>
+                        <div class="settings-row">
+                            <div class="info">
+                                <h3 class="title">{{ _('Language') }}</h3>
+                                <p class="desc">{{ _("Default language for public dashboard.") }}</p>
+                            </div>
+                            <div class="select-container">
+                                <div class="selected-container">
+                                    <p>{{ languages.get(session.get('language_code', user.language_code), {}).get('name', '') }}</p>
+                                    <span class="material-symbols-outlined">keyboard_arrow_up</span>
+                                </div>
+                                <div class="options">
+                                    {% for key, value in languages.items() %}
+                                    <a href="{{ url_for('set_language', language=key) }}">
+                                        <p class="option">{{ value["name"] }}</p>
+                                    </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="settings-column">
+                            <div class="settings-row">
+                                <div class="info">
+                                    <h3 class="title">{{ _('Dark Mode') }}</h3>
+                                    <p class="desc">{{ _('Quickly toggle between light and dark modes for a personalized.') }}</p>
+                                </div>
+                                <label class="switch">
+                                    <input data-id="toggle-dark-mode" type="checkbox" checked />
+                                    <span class="switch-slider"></span>
+                                </label>
+                            </div>
+                            <div class="settings-row">
+                                <div class="info">
+                                    <h3 class="title">{{ _('Rounded Corners') }}</h3>
+                                    <p class="desc">{{ _('Switch between sharp brutalist corners and soft rounded corners.') }}</p>
+                                </div>
+                                <label class="switch">
+                                    <input data-id="toggle-corners" type="checkbox" />
+                                    <span class="switch-slider"></span>
+                                </label>
+                            </div>
+                            <div class="color-select-container">
+                                <div class="color" data-id="purple" style="background-color: #8957ff"></div>
+                                <div class="color" data-id="pink" style="background-color: #fa8abb"></div>
+                                <div class="color" data-id="red" style="background-color: #ff3366"></div>
+                                <div class="color" data-id="yellow" style="background-color: #ffbb00"></div>
+                                <div class="color" data-id="blue" style="background-color: #02bbff"></div>
+                                <div class="color" data-id="green" style="background-color: #00cc88"></div>
+                            </div>
+                        </div>
+                    </div>
+                    {% include "footer.html" %}
+                </div>
+            </div>
+            {% include "queue.html" %}
+            <div id="queue-overlay" class="mobile-overlay"></div>
+            {% include "controller.html" %}
+        </div>
+    </body>
+</html>

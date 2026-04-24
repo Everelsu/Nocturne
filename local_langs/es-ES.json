@@ -4,7 +4,8 @@
     "channel": "canal",
     "Provide a channel to connect.": "Proporciona un canal para conectar.",
     "play": "reproducir",
-    "Loads your input and added it to the queue.": "Carga tu entrada y la añade a la cola.",
+    "Loads your input into the queue.": "Carga tu entrada en la cola.",
+    "Searches your query and displays the results.": "Busca tu consulta y muestra los resultados.",
     "query": "consulta",
     "Input a query or a searchable link.": "Introduce una consulta o un enlace de búsqueda.",
     "search": "buscar",
@@ -92,7 +93,7 @@
     "title": "titulo",
     "Searches for your query and displays the reutned lyrics.": "Busca tu consulta y muestra la letra encontrada.",
     "artist": "artista",
-    "swapdj": "cambiar_dj",
+    "swapdj": "cambiardj",
     "Transfer dj to another.": "Transfiere el DJ a otro.",
     "Choose a member to transfer the dj role.": "Elige un miembro para transferir el rol de DJ.",
     "autoplay": "reproduccion_auto",
@@ -108,7 +109,7 @@
     "value": "valor",
     "Play the specific track from your custom playlist.": "Reproduce la pista específica de tu lista de reproducción personalizada.",
     "view": "ver",
-    "List all your playlist and all songs in your favourite playlist.": "Lista todas tus listas de reproducción y canciones en tu lista favorita.",
+    "List all your playlists and all songs in your favourite playlist.": "Lista todas tus listas de reproducción y canciones en tu lista favorita.",
     "create": "crear",
     "Create your custom playlist.": "Crea tu lista de reproducción personalizada.",
     "Give a name to your playlist.": "Dale un nombre a tu lista de reproducción.",
@@ -231,5 +232,8 @@
     "stageannounce": "anuncio_escenario",
     "Soundcloud": "Soundcloud",
     "Fairqueue":"ColaJusta",
-    "togglecontroller":"cambiarcontrolador"
+    "togglecontroller":"cambiarcontrolador",
+    "reset": "reiniciar",
+    "Which setting to restore to defaults": "Qué configuración restaurar a los valores por defecto.",
+    "Remove one guild setting override so the bot uses its default again.": "Restablece una opción del servidor a su valor predeterminado."
 }
