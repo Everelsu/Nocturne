@@ -1,6 +1,6 @@
 
-# Vocard Bot
-Vocard is a highly customizable Discord music bot, designed to deliver a user-friendly experience. It offers support for a wide range of streaming platforms including Youtube, Soundcloud, Spotify, Twitch, and more.
+# Nocturne Bot
+Nocturne is a highly customizable Discord music bot, designed to deliver a user-friendly experience. It offers support for a wide range of streaming platforms including Youtube, Soundcloud, Spotify, Twitch, Yandex music and more.
 
 ## Features
 * Fast song loading
@@ -16,18 +16,12 @@ Vocard is a highly customizable Discord music bot, designed to deliver a user-fr
 * Multiple languages available
 * Easy to update
 * Supports docker
-* [Premium dashboard](https://github.com/ChocoMeow/Vocard-Dashboard)
-
-## Screenshot
-![features](https://github.com/user-attachments/assets/2a1baf75-d1c8-41d1-a66f-7011e96d5feb)
+* Premium dashboard
 
 ## Requirements
 * [Python 3.11+](https://www.python.org/downloads/)
 * [Lavalink Server (Requires 4.0.0+)](https://github.com/freyacodes/Lavalink)
 
-## Setup
-Please see the [Setup Page](https://docs.vocard.xyz/latest/bot/setup) in the docs to run this bot yourself!
 
-## Need Help?
-Join the [Vocard Support Discord](https://discord.gg/wRCgB7vBQv) for help or questions.
+
 
