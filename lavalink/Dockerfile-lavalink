@@ -5,11 +5,13 @@ RUN groupadd -g 322 lavalink && \
 
 WORKDIR /opt/Lavalink
 
-COPY --chown=lavalink:lavalink Lavalink.jar .
-
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends netcat-openbsd && \
+    apt-get install -y --no-install-recommends netcat-openbsd curl && \
     rm -rf /var/lib/apt/lists/*
+
+ARG LAVALINK_VERSION=4.0.8
+RUN curl -fsSL -o Lavalink.jar "https://github.com/lavalink-devs/Lavalink/releases/download/${LAVALINK_VERSION}/Lavalink.jar" && \
+    chown lavalink:lavalink Lavalink.jar
 
 USER lavalink
 
