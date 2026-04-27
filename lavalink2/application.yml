@@ -1,0 +1,166 @@
+lavalink:
+    plugins:
+    -   dependency: dev.lavalink.youtube:youtube-plugin:1.18.0
+        snapshot: false
+    -   dependency: com.github.topi314.lavasrc:lavasrc-plugin:4.8.1
+        snapshot: false
+    server:
+        bufferDurationMs: 400
+        filters:
+            channelMix: true
+            distortion: true
+            equalizer: true
+            karaoke: true
+            lowPass: true
+            rotation: true
+            timescale: true
+            tremolo: true
+            vibrato: true
+            volume: true
+        frameBufferDurationMs: 5000
+        gc-warnings: true
+        nonAllocatingFrameBuffer: false
+        opusEncodingQuality: 10
+        password: "-4&Sbw><yviC(W#"
+        playerUpdateInterval: 5
+        resamplingQuality: LOW
+        soundcloudSearchEnabled: true
+        sources:
+            bandcamp: true
+            http: true
+            local: false
+            nico: true
+            soundcloud: true
+            twitch: true
+            vimeo: true
+            youtube: false
+        trackStuckThresholdMs: 10000
+        useSeekGhosting: true
+        youtubePlaylistLoadLimit: 6
+        youtubeSearchEnabled: true
+logging:
+    file:
+        path: ./logs/
+    level:
+        lavalink: INFO
+        root: INFO
+    logback:
+        rollingpolicy:
+            max-file-size: 1GB
+            max-history: 30
+    request:
+        enabled: true
+        includeClientInfo: true
+        includeHeaders: false
+        includePayload: true
+        includeQueryString: true
+        maxPayloadLength: 10000
+metrics:
+    prometheus:
+        enabled: false
+        endpoint: /metrics
+plugins:
+    lavasrc:
+        applemusic:
+            albumLoadLimit: 6
+            countryCode: US
+            keyID: your key id
+            mediaAPIToken: your apple music api token
+            musicKitKey: '-----BEGIN PRIVATE KEY-----
+
+                your key
+
+                -----END PRIVATE KEY-----
+
+                '
+            playlistLoadLimit: 6
+            teamID: your team id
+        deezer:
+            formats:
+            - FLAC
+            - MP3_320
+            - MP3_256
+            - MP3_128
+            - MP3_64
+            - AAC_64
+            masterDecryptionKey: your master decryption key
+        flowerytts:
+            audioFormat: mp3
+            silence: 0
+            speed: 1.0
+            translate: false
+            voice: default voice
+        lyrics-sources:
+            deezer: false
+            spotify: false
+            vkmusic: true
+            yandexmusic: true
+            youtube: false
+        providers:
+        - ytsearch:"%ISRC%"
+        - ytsearch:%QUERY%
+        - ymsearch:%QUERY%
+        - vksearch:%QUERY%
+        sources:
+            applemusic: false
+            deezer: false
+            flowerytts: false
+            spotify: true
+            vkmusic: true
+            yandexmusic: true
+            youtube: false
+        spotify:
+            albumLoadLimit: 6
+            clientId: ''
+            clientSecret: ''
+            countryCode: US
+            customTokenEndpoint: http://spotify-tokener:49152/api/token
+            localFiles: false
+            playlistLoadLimit: 6
+            preferAnonymousToken: false
+            resolveArtistsInSearch: true
+        vkmusic:
+            artistLoadLimit: 1
+            playlistLoadLimit: 1
+            recommendationsLoadLimit: 10
+            userToken: your user token
+        yandexmusic:
+            accessToken: your access token
+            albumLoadLimit: 1
+            artistLoadLimit: 1
+            playlistLoadLimit: 1
+        youtube:
+            countryCode: US
+    youtube:
+        allowDirectPlaylistIds: true
+        allowDirectVideoIds: true
+        allowSearch: true
+        clientOptions:
+            WEBEMBEDDED:
+                playlistLoading: false
+                searching: false
+        clients:
+        - TV
+        - MUSIC
+        - WEB
+        - ANDROID_VR
+        - ANDROID_MUSIC
+        - WEBEMBEDDED
+        - TVHTML5_SIMPLY
+        enabled: true
+        oauth:
+            enabled: true
+            refreshToken: "1//09J4HF2i3c14gCgYIARAAGAkSNwF-L9IrNDgDYshJaPgoeeNLnFzIf13O8TsnaEbG6nIlTp8-4UbHcxXw0DN2WdXrzXg8WhKWCBs"
+        remoteCipher:
+            password: ''
+            url: http://yt-cipher:8001
+            userAgent: ''
+sentry:
+    dsn: ''
+    environment: ''
+server:
+    address: 0.0.0.0
+    http2:
+        enabled: true
+    password: youshallnotpass
+    port: 2333
