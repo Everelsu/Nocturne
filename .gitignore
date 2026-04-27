@@ -175,13 +175,10 @@ cython_debug/
 .pypirc
 
 # Custom file
-settings.json
 logs
 
 # Private Lavalink instances and configs with tokens
 lavalink2/
-lavalink/application.yml
 lavalink/logs/
 dashboard/logs/
-dashboard/settings.json
 cloudflared/
