@@ -11,7 +11,7 @@
             { "type": "listening", "name": "/help", "status": "online" }
         ],
 
-        "mongodb_url": "mongodb://admin:admin@vocard-db:27017",
+        "mongodb_url": "mongodb://mongo:HQzBruafmcJXuRMRearbUjuqcQxWrVtf@mongodb.railway.internal:27017",
         "mongodb_name": "Nocturne",
 
         "nodes": {
@@ -146,7 +146,7 @@
             { "type": "listening", "name": "/help", "status": "online" }
         ],
 
-        "mongodb_url": "mongodb://admin:admin@vocard-db:27017",
+        "mongodb_url": "mongodb://mongo:HQzBruafmcJXuRMRearbUjuqcQxWrVtf@mongodb.railway.internal:27017",
         "mongodb_name": "Nocturne",
 
         "nodes": {
