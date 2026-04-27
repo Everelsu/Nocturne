@@ -18,7 +18,7 @@
             "DEFAULT": {
                 "host": "kind-inspiration.railway.internal",
                 "port": 2333,
-                "password": "youshallnotpass",
+                "password": "|V(VR$3>aE_A=dN",
                 "secure": false,
                 "identifier": "DEFAULT",
                 "yt_ratelimit": {
