@@ -9,7 +9,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends wget netcat-openbsd && \
     rm -rf /var/lib/apt/lists/*
 
-RUN wget -O Lavalink.jar https://github.com/lavalink-devs/Lavalink/releases/download/4.0.8/Lavalink.jar
+RUN wget -O Lavalink.jar https://github.com/lavalink-devs/Lavalink/releases/download/4.2.2/Lavalink.jar
 
 COPY --chown=lavalink:lavalink application.yml .
 
