@@ -15,6 +15,7 @@
 [build]
 builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
+watchPatterns = ["dashboard/**"]
 
 [deploy]
 restartPolicyType       = "ON_FAILURE"

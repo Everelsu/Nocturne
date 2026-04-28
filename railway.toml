@@ -23,6 +23,14 @@
 [build]
 builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
+# Only redeploy when bot source files change (not dashboard/lavalink/yt-cipher)
+watchPatterns = [
+    "**/*.py",
+    "requirements.txt",
+    "settings.json",
+    "Dockerfile",
+    "locales/**"
+]
 
 [deploy]
 restartPolicyType    = "ON_FAILURE"

@@ -325,7 +325,7 @@ class Player(VoiceProtocol):
         
     async def _update_state(self, data: dict) -> None:
         """Updates the player's state based on the provided data."""
-        state: dict = data.get("state")
+        state: dict = data.get("state") or {}
         self._last_update = time.time() * 1000
         self._is_connected = state.get("connected")
         self._last_position = state.get("position")

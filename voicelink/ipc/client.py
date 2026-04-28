@@ -123,7 +123,8 @@ class IPCClient:
 
     async def disconnect(self) -> None:
         self._is_connected = False
-        self._task.cancel()
+        if self._task and not self._task.done():
+            self._task.cancel()
         self._logger.info("Disconnected to dashboard!")
     
     @property

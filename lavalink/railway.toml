@@ -17,6 +17,7 @@
 [build]
 builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile-lavalink"
+watchPatterns = ["lavalink/**"]
 
 [deploy]
 restartPolicyType       = "ON_FAILURE"
