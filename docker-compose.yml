@@ -141,6 +141,10 @@ services:
         environment:
             HOST: "0.0.0.0"
             PORT: "8080"
+        volumes:
+            # Монтируем settings.json для локальной разработки.
+            # На Railway settings.json не нужен — всё через env vars.
+            - ./settings.json:/app/settings.json:ro
         ports:
             - "8080:8080"
         networks:

@@ -417,7 +417,14 @@ class Settings:
         self.secret_key: str       = os.getenv("SECRET_KEY")        or self.get_setting("secret_key", "")
         self.redirect_url: str     = os.getenv("REDIRECT_URL")      or self.get_setting("redirect_url", "")
 
-        self.logging: Dict[str, Any] = self.get_setting("logging")
+        self.logging: Dict[str, Any] = self.get_setting("logging") or {
+            "file": {
+                "path": os.getenv("LOG_PATH", "./logs"),
+                "enable": os.getenv("LOG_FILE_ENABLE", "true").lower() != "false",
+            },
+            "level": {"dashboard": os.getenv("LOG_LEVEL", "INFO")},
+            "max_history": 30,
+        }
 
     def get_setting(self, key: str, default: Optional[str] = None) -> Optional[str]:
         return self.settings.get(key, default)

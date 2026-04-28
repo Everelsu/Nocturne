@@ -40,7 +40,7 @@
             "default_playlist_name": "Favourite"
         },
 
-        "webpanel_url": "",
+        "webpanel_url": "https://nocturne.su",
 
         "ipc_client": {
             "host": "vocard-dashboard",
@@ -173,7 +173,7 @@
             "default_playlist_name": "Favourite"
         },
 
-        "webpanel_url": "",
+        "webpanel_url": "https://nocturne.su",
 
         "ipc_client": {
             "host": "vocard-dashboard",
@@ -271,7 +271,7 @@
         "client_id": "",
         "client_secret_id": "",
         "secret_key": "",
-        "redirect_url": "",
+        "redirect_url": "https://nocturne.su/callback",
         "logging": {
             "file": { "path": "./logs", "enable": true },
             "level": { "dashboard": "INFO" },

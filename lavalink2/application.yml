@@ -90,20 +90,19 @@ plugins:
         lyrics-sources:
             deezer: false
             spotify: false
-            vkmusic: true
+            vkmusic: false
             yandexmusic: true
             youtube: false
         providers:
         - ytsearch:"%ISRC%"
         - ytsearch:%QUERY%
         - ymsearch:%QUERY%
-        - vksearch:%QUERY%
         sources:
             applemusic: false
             deezer: false
             flowerytts: false
             spotify: true
-            vkmusic: true
+            vkmusic: false
             yandexmusic: true
             youtube: false
         spotify:
@@ -116,11 +115,6 @@ plugins:
             playlistLoadLimit: 6
             preferAnonymousToken: false
             resolveArtistsInSearch: true
-        vkmusic:
-            artistLoadLimit: 1
-            playlistLoadLimit: 1
-            recommendationsLoadLimit: 10
-            userToken: "${VKMUSIC_USER_TOKEN:your user token}"
         yandexmusic:
             accessToken: "${YANDEX_MUSIC_TOKEN:}"
             albumLoadLimit: 1
