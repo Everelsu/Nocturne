@@ -1,6 +1,7 @@
 # Git
 .git
 .gitignore
+.github
 
 # Dev / local env
 .env
@@ -13,13 +14,19 @@ __pycache__
 *.pyo
 .pytest_cache
 .mypy_cache
+.ruff_cache
 
-# Logs & compiled assets
+# Logs & data
 logs/
+data/
 *.log
-static/dist/
-static/*.min.js
-static/*.min.css
+
+# Docker artefacts (not needed inside the bot image)
+docker-compose.yml
+docker-compose.*.yml
+lavalink/
+lavalink2/
+dashboard/
 
 # Misc
 *.md

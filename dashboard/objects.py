@@ -408,13 +408,14 @@ class Settings:
         self.settings_file = settings_file
         self.settings = self.load()
 
-        self.host: str = self.get_setting("host") or os.getenv("HOST")
-        self.port: int = self.get_setting("port") or os.getenv("PORT", 5000)
-        self.password: int = self.get_setting("password") or os.getenv("PASSWORD")
-        self.client_id: str = self.get_setting("client_id") or os.getenv("CLIENT_ID")
-        self.client_secret_id: str = self.get_setting("client_secret_id") or os.getenv("CLIENT_SECRET_ID")
-        self.secret_key: str = self.get_setting("secret_key") or os.getenv("SECRET_KEY")
-        self.redirect_url: str = self.get_setting("redirect_url") or os.getenv("REDIRECT_URL")
+        # Env vars have PRIORITY over settings.json (Railway-friendly)
+        self.host: str             = os.getenv("HOST")              or self.get_setting("host", "0.0.0.0")
+        self.port: int             = int(os.getenv("PORT")          or self.get_setting("port", 8080))
+        self.password: str         = os.getenv("DASHBOARD_PASSWORD") or self.get_setting("password", "changeme")
+        self.client_id: str        = os.getenv("CLIENT_ID")         or self.get_setting("client_id", "")
+        self.client_secret_id: str = os.getenv("CLIENT_SECRET_ID")  or self.get_setting("client_secret_id", "")
+        self.secret_key: str       = os.getenv("SECRET_KEY")        or self.get_setting("secret_key", "")
+        self.redirect_url: str     = os.getenv("REDIRECT_URL")      or self.get_setting("redirect_url", "")
 
         self.logging: Dict[str, Any] = self.get_setting("logging")
 

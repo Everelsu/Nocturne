@@ -1,61 +1,46 @@
 name: nocturne
-services:
-    lavalink:
-        container_name: lavalink
-        build:
-            context: ./lavalink
-            dockerfile: ./Dockerfile-lavalink
-        restart: unless-stopped
-        environment:
-            - _JAVA_OPTIONS=-Xmx1G
-            - SERVER_PORT=2333
-            - LAVALINK_SERVER_PASSWORD=youshallnotpass
-        volumes:
-            - ./lavalink/application.yml:/opt/Lavalink/application.yml
-            - ./lavalink/plugins:/opt/Lavalink/plugins
-            - ./lavalink/logs:/opt/Lavalink/logs
-        networks:
-            - vocard
-        expose:
-            - "2333"
-        healthcheck:
-            test: nc -z -v localhost 2333
-            interval: 10s
-            timeout: 5s
-            retries: 10
-            start_period: 60s
 
-    lavalink2:
-        container_name: lavalink2
-        build:
-            context: ./lavalink2
-            dockerfile: ../lavalink/Dockerfile-lavalink
+# ─────────────────────────────────────────────────────────────────────────────
+# Local development stack.
+# Copy .env.example to .env and fill in your secrets before running.
+#
+# Usage:
+#   docker compose up -d
+#   docker compose logs -f vocard
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+    # ── Infrastructure ────────────────────────────────────────────────────────
+
+    vocard-db:
+        container_name: vocard-db
+        image: mongo:8
         restart: unless-stopped
-        environment:
-            - _JAVA_OPTIONS=-Xmx1G
-            - SERVER_PORT=2333
-            - LAVALINK_SERVER_PASSWORD=youshallnotpass
         volumes:
-            - ./lavalink2/application.yml:/opt/Lavalink/application.yml
-            - ./lavalink2/plugins:/opt/Lavalink/plugins
-            - ./lavalink2/logs:/opt/Lavalink/logs
+            - ./data/mongo/db:/data/db
+            - ./data/mongo/conf:/data/configdb
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:-admin}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASS:-admin}
+        expose:
+            - "27017"
         networks:
             - vocard
-        expose:
-            - "2333"
+        command: ["mongod", "--oplogSize=1024", "--wiredTigerCacheSizeGB=1", "--auth", "--noscripting"]
         healthcheck:
-            test: nc -z -v localhost 2333
+            test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
             interval: 10s
             timeout: 5s
-            retries: 10
-            start_period: 60s
+            retries: 5
+            start_period: 10s
 
     spotify-tokener:
         image: ghcr.io/topi314/spotify-tokener:master
         container_name: spotify-tokener
         restart: unless-stopped
         environment:
-            - SPOTIFY_TOKENER_ADDR=0.0.0.0:49152
+            SPOTIFY_TOKENER_ADDR: "0.0.0.0:49152"
         networks:
             - vocard
         expose:
@@ -75,36 +60,87 @@ services:
         expose:
             - "8001"
 
-    vocard-db:
-        container_name: vocard-db
-        image: mongo:8
+    # ── Lavalink nodes ────────────────────────────────────────────────────────
+
+    lavalink:
+        container_name: lavalink
+        build:
+            context: ./lavalink
+            dockerfile: Dockerfile-lavalink
         restart: unless-stopped
-        volumes:
-            - ./data/mongo/db:/data/db
-            - ./data/mongo/conf:/data/configdb
         environment:
-            - MONGO_INITDB_ROOT_USERNAME=admin
-            - MONGO_INITDB_ROOT_PASSWORD=admin
-        expose:
-            - "27017"
+            _JAVA_OPTIONS: "-Xmx1G"
+            SERVER_PORT: "2333"
+            LAVALINK_SERVER_PASSWORD: ${LAVALINK_PASSWORD:-youshallnotpass}
+            YOUTUBE_OAUTH_TOKEN: ${YOUTUBE_OAUTH_TOKEN:-}
+            YANDEX_MUSIC_TOKEN: ${YANDEX_MUSIC_TOKEN:-}
+            SPOTIFY_CLIENT_ID: ${SPOTIFY_CLIENT_ID:-}
+            SPOTIFY_CLIENT_SECRET: ${SPOTIFY_CLIENT_SECRET:-}
+            VKMUSIC_USER_TOKEN: ${VKMUSIC_USER_TOKEN:-}
+            SPOTIFY_TOKENER_URL: "http://spotify-tokener:49152/api/token"
+            YT_CIPHER_URL: "http://yt-cipher:8001"
+        volumes:
+            - ./lavalink/logs:/opt/Lavalink/logs
         networks:
             - vocard
-        command: ["mongod", "--oplogSize=1024", "--wiredTigerCacheSizeGB=1", "--auth", "--noscripting"]
+        expose:
+            - "2333"
+        depends_on:
+            - spotify-tokener
+            - yt-cipher
         healthcheck:
-            test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+            test: nc -z -v localhost 2333
             interval: 10s
             timeout: 5s
-            retries: 5
-            start_period: 10s
+            retries: 10
+            start_period: 60s
+
+    lavalink2:
+        container_name: lavalink2
+        build:
+            context: ./lavalink2
+            dockerfile: Dockerfile
+        restart: unless-stopped
+        environment:
+            _JAVA_OPTIONS: "-Xmx1G"
+            SERVER_PORT: "2333"
+            LAVALINK_SERVER_PASSWORD: ${LAVALINK2_PASSWORD:-youshallnotpass}
+            YOUTUBE_OAUTH_TOKEN: ${YOUTUBE_OAUTH_TOKEN:-}
+            YANDEX_MUSIC_TOKEN: ${YANDEX_MUSIC_TOKEN:-}
+            SPOTIFY_CLIENT_ID: ${SPOTIFY_CLIENT_ID:-}
+            SPOTIFY_CLIENT_SECRET: ${SPOTIFY_CLIENT_SECRET:-}
+            VKMUSIC_USER_TOKEN: ${VKMUSIC_USER_TOKEN:-}
+            SPOTIFY_TOKENER_URL: "http://spotify-tokener:49152/api/token"
+            YT_CIPHER_URL: "http://yt-cipher:8001"
+        volumes:
+            - ./lavalink2/logs:/opt/Lavalink/logs
+        networks:
+            - vocard
+        expose:
+            - "2333"
+        depends_on:
+            - spotify-tokener
+            - yt-cipher
+        healthcheck:
+            test: nc -z -v localhost 2333
+            interval: 10s
+            timeout: 5s
+            retries: 10
+            start_period: 60s
+
+    # ── Dashboard ─────────────────────────────────────────────────────────────
 
     vocard-dashboard:
         container_name: vocard-dashboard
         build:
             context: ./dashboard
-            dockerfile: ./Dockerfile
+            dockerfile: Dockerfile
         restart: unless-stopped
-        volumes:
-            - ./settings.json:/app/settings.json
+        env_file:
+            - .env
+        environment:
+            HOST: "0.0.0.0"
+            PORT: "8080"
         ports:
             - "8080:8080"
         networks:
@@ -116,22 +152,28 @@ services:
             retries: 5
             start_period: 10s
 
+    # ── Bot instances ─────────────────────────────────────────────────────────
+
     vocard:
         container_name: vocard
         build:
             context: .
-            dockerfile: ./Dockerfile
+            dockerfile: Dockerfile
         restart: unless-stopped
-        volumes:
-            - ./settings.json:/app/settings.json
+        env_file:
+            - .env
         environment:
-            - BOT_SECTION=nocturne
+            BOT_SECTION: "nocturne"
+            LAVALINK_HOST: "lavalink"
+            LAVALINK_PORT: "2333"
+            LAVALINK_PASSWORD: ${LAVALINK_PASSWORD:-youshallnotpass}
+            IPC_HOST: "vocard-dashboard"
+            IPC_PORT: "8080"
+            IPC_ENABLE: "true"
         networks:
             - vocard
         depends_on:
             lavalink:
-                condition: service_healthy
-            lavalink2:
                 condition: service_healthy
             vocard-db:
                 condition: service_healthy
@@ -142,17 +184,21 @@ services:
         container_name: vocard2
         build:
             context: .
-            dockerfile: ./Dockerfile
+            dockerfile: Dockerfile
         restart: unless-stopped
-        volumes:
-            - ./settings.json:/app/settings.json
+        env_file:
+            - .env.nocturne2
         environment:
-            - BOT_SECTION=nocturne2
+            BOT_SECTION: "nocturne2"
+            LAVALINK_HOST: "lavalink2"
+            LAVALINK_PORT: "2333"
+            LAVALINK_PASSWORD: ${LAVALINK2_PASSWORD:-youshallnotpass}
+            IPC_HOST: "vocard-dashboard"
+            IPC_PORT: "8080"
+            IPC_ENABLE: "true"
         networks:
             - vocard
         depends_on:
-            lavalink:
-                condition: service_healthy
             lavalink2:
                 condition: service_healthy
             vocard-db:

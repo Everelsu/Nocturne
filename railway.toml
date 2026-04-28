@@ -1,0 +1,29 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Railway config — Bot service (vocard / nocturne)
+# Root Directory: /   (repo root)
+#
+# Env vars to set in Railway dashboard:
+#   BOT_SECTION        = nocturne          (or nocturne2 for the second bot)
+#   TOKEN              = <discord token>
+#   CLIENT_ID          = <discord app id>
+#   MONGODB_URL        = ${{MongoDB.MONGO_URL}}
+#   MONGODB_NAME       = Nocturne
+#   LAVALINK_HOST      = lavalink.railway.internal
+#   LAVALINK_PORT      = 2333
+#   LAVALINK_PASSWORD  = <your lavalink password>
+#   IPC_HOST           = vocard-dashboard.railway.internal
+#   IPC_PORT           = 8080
+#   IPC_PASSWORD       = <dashboard password>
+#   IPC_ENABLE         = true
+#   WEBPANEL_URL       = https://your-dashboard-url.railway.app
+#   GENIUS_TOKEN       = <optional>
+#   YOUTUBE_OAUTH_TOKENS = ["token1","token2"]   (JSON array, optional)
+# ─────────────────────────────────────────────────────────────────────────────
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+restartPolicyType    = "ON_FAILURE"
+restartPolicyMaxRetries = 5

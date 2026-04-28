@@ -1,0 +1,15 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Railway config — Lavalink2 service  (second bot instance)
+# Root Directory: /lavalink2
+#
+# Env vars: same as /lavalink — use separate values if you want
+#   a different password for the second node.
+# ─────────────────────────────────────────────────────────────────────────────
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+restartPolicyType       = "ON_FAILURE"
+restartPolicyMaxRetries = 5

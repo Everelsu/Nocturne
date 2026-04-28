@@ -1,0 +1,15 @@
+# Git
+.git
+.gitignore
+
+# Logs
+logs/
+*.log
+
+# Redundant second Dockerfile
+Dockerfile-lavalink
+
+# Misc
+*.md
+.DS_Store
+Thumbs.db

@@ -1,0 +1,21 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Railway config — Dashboard service (vocard-dashboard)
+# Root Directory: /dashboard
+#
+# Env vars to set in Railway dashboard:
+#   HOST               = 0.0.0.0
+#   PORT               = 8080
+#   DASHBOARD_PASSWORD = <ipc password — must match IPC_PASSWORD in bot>
+#   CLIENT_ID          = <discord app id>
+#   CLIENT_SECRET_ID   = <discord oauth secret>
+#   SECRET_KEY         = <random secret for sessions>
+#   REDIRECT_URL       = https://<your-railway-domain>/callback
+# ─────────────────────────────────────────────────────────────────────────────
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+restartPolicyType       = "ON_FAILURE"
+restartPolicyMaxRetries = 5

@@ -178,7 +178,15 @@ cython_debug/
 logs
 
 # Private Lavalink instances and configs with tokens
-lavalink2/
 lavalink/logs/
+lavalink2/logs/
 dashboard/logs/
 cloudflared/
+
+# Local env files (secrets — never commit)
+.env
+.env.*
+!.env.example
+
+# Local MongoDB data volume
+data/
