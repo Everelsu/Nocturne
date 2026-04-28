@@ -123,7 +123,14 @@ class Node:
         
         self.yt_ratelimit: Optional[YTRatelimit] = STRATEGY.get(yt_ratelimit.get("strategy"))(self, yt_ratelimit) if yt_ratelimit and yt_ratelimit.get("tokens") else None
 
-        self._bot.add_listener(self._update_handler, "on_socket_response")
+        # NOTE: do NOT register _update_handler via on_socket_response.
+        # In discord.py 2.x, the library already calls on_voice_state_update /
+        # on_voice_server_update on the VoiceProtocol (Player) directly through
+        # ConnectionState.parse_voice_server_update / parse_voice_state_update.
+        # Registering the old 1.x-style on_socket_response listener as well
+        # causes _dispatch_voice_update to fire TWICE per join: the first
+        # Lavalink PATCH opens a voice connection, the second one tears it
+        # down and restarts it — generating the spurious 1006 close code.
 
     def __repr__(self):
         return (
