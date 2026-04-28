@@ -2,8 +2,16 @@
 # Railway config — Lavalink2 service  (second bot instance)
 # Root Directory: /lavalink2
 #
-# Env vars: same as /lavalink — use separate values if you want
-#   a different password for the second node.
+# Env vars to set in Railway dashboard:
+#   LAVALINK_SERVER_PASSWORD = <strong password>
+#   SERVER_PORT              = 2333
+#   YOUTUBE_OAUTH_TOKEN      = <optional — YouTube OAuth refresh token>
+#   YANDEX_MUSIC_TOKEN       = <optional>
+#   SPOTIFY_CLIENT_ID        = <optional>
+#   SPOTIFY_CLIENT_SECRET    = <optional>
+#   SPOTIFY_TOKENER_URL      = http://spotify-tokener.railway.internal:49152/api/token
+#   YT_CIPHER_URL            = http://yt-cipher.railway.internal:8001
+#   VKMUSIC_USER_TOKEN       = <optional>
 # ─────────────────────────────────────────────────────────────────────────────
 
 [build]
