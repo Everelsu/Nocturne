@@ -137,6 +137,45 @@ class Listeners(commands.Cog):
             func.logger.error("Failed to remove session file: %s", Config.LAST_SESSION_FILE_DIR, exc_info=del_error)
 
     @commands.Cog.listener()
+    async def on_voicelink_websocket_closed(self, payload: voicelink.WebSocketClosedPayload):
+        """Handle Lavalink reporting that its voice WebSocket to Discord closed.
+
+        Code 1006 = abnormal closure (network hiccup / transient drop).
+        Code 4015 = Discord voice server crashed.
+
+        Both are recoverable: re-join the same voice channel so Discord
+        issues a fresh VOICE_SERVER_UPDATE which Lavalink uses to reconnect
+        its audio stream.  Other codes (4014 = kicked, 4006 = session invalid,
+        etc.) are handled elsewhere or indicate the bot should leave.
+        """
+        if not payload.guild:
+            return
+
+        player: voicelink.Player = payload.guild.voice_client
+        if not player or not player.channel:
+            return
+
+        func.logger.warning(
+            f"Voice WS closed for {payload.guild.name}({payload.guild.id}) "
+            f"code={payload.code} by_remote={payload.by_remote}"
+        )
+
+        if payload.code in (1006, 4015):
+            await asyncio.sleep(2)
+            try:
+                # Re-joining the same channel makes Discord send a fresh
+                # VOICE_STATE_UPDATE + VOICE_SERVER_UPDATE so Lavalink can
+                # reconnect and resume the current track.
+                await payload.guild.change_voice_state(
+                    channel=player.channel, self_deaf=True
+                )
+            except Exception as e:
+                func.logger.error(
+                    f"Voice reconnect failed for {payload.guild.name}"
+                    f"({payload.guild.id}): {e}"
+                )
+
+    @commands.Cog.listener()
     async def on_voicelink_track_end(self, player: voicelink.Player, track, _):
         await player.do_next()
 
