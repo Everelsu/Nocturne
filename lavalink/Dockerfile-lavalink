@@ -9,14 +9,14 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends wget netcat-openbsd && \
     rm -rf /var/lib/apt/lists/*
 
-RUN wget -O Lavalink.jar https://github.com/lavalink-devs/Lavalink/releases/download/4.0.8/Lavalink.jar
-
-COPY --chown=lavalink:lavalink application.yml .
+RUN wget --tries=3 -O Lavalink.jar https://github.com/lavalink-devs/Lavalink/releases/download/4.0.8/Lavalink.jar
 
 RUN mkdir -p plugins && \
-    wget -O plugins/youtube-plugin-1.18.0.jar https://github.com/lavalink-devs/youtube-source/releases/download/1.18.0/youtube-plugin-1.18.0.jar && \
-    wget -O plugins/lavasrc-plugin-4.8.1.jar https://github.com/topi314/LavaSrc/releases/download/4.8.1/lavasrc-plugin-4.8.1.jar && \
+    wget --tries=3 -O plugins/youtube-plugin-1.18.0.jar https://github.com/lavalink-devs/youtube-source/releases/download/1.18.0/youtube-plugin-1.18.0.jar && \
+    wget --tries=3 -O plugins/lavasrc-plugin-4.8.1.jar https://github.com/topi314/LavaSrc/releases/download/4.8.1/lavasrc-plugin-4.8.1.jar && \
     chown -R lavalink:lavalink /opt/Lavalink
+
+COPY --chown=lavalink:lavalink application.yml .
 
 USER lavalink
 
