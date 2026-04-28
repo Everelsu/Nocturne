@@ -142,10 +142,6 @@ plugins:
         oauth:
             enabled: true
             refreshToken: "${YOUTUBE_OAUTH_TOKEN:}"
-        remoteCipher:
-            password: "${YT_CIPHER_PASSWORD:}"
-            url: "${YT_CIPHER_URL:http://yt-cipher:8001}"
-            userAgent: ""
 
 sentry:
     dsn: "${SENTRY_DSN:}"
