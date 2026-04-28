@@ -121,6 +121,11 @@ class Vocard(commands.Bot):
                 except Exception as e:
                     func.logger.error(f"Something went wrong while loading {module[:-3]} cog.", exc_info=e)
 
+        # Snapshot the version from settings.json before patching it.
+        # In Docker the image always bakes in version="" so _stored_version will
+        # be "" on every cold start — used below to decide whether to sync.
+        _stored_version = bot_config.version
+
         # Ensure the version is always set to the actual running version before IPC connects.
         # settings.json has version="" in the Docker image (ephemeral container), so
         # Config().version would send an empty Client-Version header and fail the dashboard check.
@@ -133,8 +138,9 @@ class Vocard(commands.Bot):
             except Exception as e:
                 func.logger.error(f"Cannot connected to dashboard! - Reason: {e}")
 
-        # Update version tracking
-        if not bot_config.version or bot_config.version != update.__version__:
+        # Update version tracking (use the pre-patch snapshot so Docker cold starts
+        # still trigger a sync even though bot_config.version is now up-to-date).
+        if not _stored_version or _stored_version != update.__version__:
             await self.tree.sync()
             func.update_json("settings.json", new_data={"version": update.__version__})
             
