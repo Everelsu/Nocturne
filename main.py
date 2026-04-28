@@ -121,6 +121,11 @@ class Vocard(commands.Bot):
                 except Exception as e:
                     func.logger.error(f"Something went wrong while loading {module[:-3]} cog.", exc_info=e)
 
+        # Ensure the version is always set to the actual running version before IPC connects.
+        # settings.json has version="" in the Docker image (ephemeral container), so
+        # Config().version would send an empty Client-Version header and fail the dashboard check.
+        bot_config.version = update.__version__
+
         self.ipc_client: IPCClient = IPCClient(self, **bot_config.ipc_client)
         if bot_config.ipc_client.get("enable", False):
             try:
