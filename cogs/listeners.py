@@ -160,7 +160,7 @@ class Listeners(commands.Cog):
             f"code={payload.code} by_remote={payload.by_remote}"
         )
 
-        if payload.code in (1006, 4015):
+        if payload.code in (1006, 4015, 4017):
             await asyncio.sleep(2)
             try:
                 # Re-joining the same channel makes Discord send a fresh

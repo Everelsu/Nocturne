@@ -1,29 +1,18 @@
-FROM eclipse-temurin:24-jre-noble
-
-RUN groupadd -g 322 lavalink && \
-    useradd -u 322 -g lavalink -m -d /opt/Lavalink lavalink
-
-WORKDIR /opt/Lavalink
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends wget netcat-openbsd && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN wget -O Lavalink.jar https://github.com/lavalink-devs/Lavalink/releases/download/4.0.8/Lavalink.jar
-
-COPY --chown=lavalink:lavalink application.yml .
-
-RUN mkdir -p plugins && \
+# Stage 1: download plugins at build time so they're baked into the image.
+FROM alpine:3.20 AS plugins
+RUN apk add --no-cache wget ca-certificates
+RUN mkdir /dl && \
     wget --tries=5 --retry-connrefused --waitretry=10 --timeout=60 \
-        -O plugins/youtube-plugin-1.18.0.jar \
+        -O /dl/youtube-plugin-1.18.0.jar \
         https://github.com/lavalink-devs/youtube-source/releases/download/1.18.0/youtube-plugin-1.18.0.jar && \
     wget --tries=5 --retry-connrefused --waitretry=10 --timeout=60 \
-        -O plugins/lavasrc-plugin-4.8.1.jar \
-        https://github.com/topi314/LavaSrc/releases/download/4.8.1/lavasrc-plugin-4.8.1.jar && \
-    chown -R lavalink:lavalink /opt/Lavalink
+        -O /dl/lavasrc-plugin-4.8.1.jar \
+        https://github.com/topi314/LavaSrc/releases/download/4.8.1/lavasrc-plugin-4.8.1.jar
 
-USER lavalink
-
-EXPOSE 2333
-
-ENTRYPOINT ["java", "-Djdk.tls.client.protocols=TLSv1.1,TLSv1.2", "-Xmx1G", "-jar", "Lavalink.jar"]
+# Stage 2: official Lavalink image.
+#   - Uses Java 17 LTS — fully supported by Lavalink.
+#   - No -Djdk.tls.client.protocols restriction — allows TLS 1.3 for Discord voice.
+#   - Always latest stable 4.x release.
+FROM ghcr.io/lavalink-devs/lavalink:4
+COPY --from=plugins --chown=lavalink:lavalink /dl/ /opt/Lavalink/plugins/
+COPY --chown=lavalink:lavalink application.yml /opt/Lavalink/application.yml
