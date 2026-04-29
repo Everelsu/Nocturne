@@ -240,9 +240,13 @@ function buildTrackRowHtml(index, track) {
 }
 
 function buildTrackCardHtml(track) {
+    const CARD_PROXY_SOURCES = ["yandexmusic", "vkmusic", "deezer", "applemusic"]
+    const imgSrc = CARD_PROXY_SOURCES.includes(track.source)
+        ? "/proxy/image?url=" + encodeURIComponent(track.artworkUrl)
+        : track.artworkUrl
     return `<div class="card" data-id="${track.trackId}" data-type="track">
         <div class="thumbnail">
-            <img src="${track.artworkUrl}" onerror="this.src='/static/img/notFound.png'" alt="">
+            <img src="${imgSrc}" onerror="this.src='/static/img/notFound.png'" alt="">
             <span class="material-symbols-outlined filled">play_circle</span>
         </div>
         <div class="track-info">
@@ -983,7 +987,7 @@ $(document).ready(function () {
             }
 
             if ($target.hasClass("track-more")) {
-                buildContextMenu(e, ["playNow", "playNext", "AddToQueue", "getLyrics", "playlistAddTrack", "copyLink"], options)
+                buildContextMenu(e, ["playNow", "playNext", "addToQueue", "getLyrics", "playlistAddTrack", "copyLink"], options)
             } else if ($target.hasClass("track-play")) {
                 if (options.selectedTrackId != undefined) {
                     player.send({
@@ -1033,11 +1037,11 @@ $(document).ready(function () {
 
                 if ($target.is("span")) {
                     if (playlistType == "playlist" || ["link", "share"].includes(player.playlists[options.selectedPlaylistId]?.type)) {
-                        return buildContextMenu(e, ["playNow", "playNext", "AddToQueue", "getRecommendation", "getLyrics", "playlistAddTrack", "copyLink"], options)
+                        return buildContextMenu(e, ["playNow", "playNext", "addToQueue", "getRecommendation", "getLyrics", "playlistAddTrack", "copyLink"], options)
                     } else {
                         return buildContextMenu(
                             e,
-                            ["playNow", "playNext", "AddToQueue", "playlistRemoveTrack", "getRecommendation", "getLyrics", "playlistAddTrack", "copyLink"],
+                            ["playNow", "playNext", "addToQueue", "playlistRemoveTrack", "getRecommendation", "getLyrics", "playlistAddTrack", "copyLink"],
                             options
                         )
                     }
@@ -1469,6 +1473,12 @@ $(document).ready(function () {
                     trackId: options.selectedtrackid,
                 }
                 break
+            case "context-remove-from-history":
+                op = {
+                    op: "removeFromHistory",
+                    trackId: options.selectedtrackid,
+                }
+                break
             case "context-move-top":
                 op = {
                     op: "moveTrack",
@@ -1635,17 +1645,22 @@ $(document).ready(function () {
 
             if (cardType == "track") {
                 options = { selectedTrackId: cardId }
-                menuItems = ["playNow", "playNext", "AddToQueue", "getRecommendation", "getLyrics", "playlistAddTrack", "copyLink"]
+                const isInHistory = $card.closest("#history-tracks").length > 0
+                if (isInHistory) {
+                    menuItems = ["playNow", "playNext", "addToQueue", "removeFromHistory", "getRecommendation", "getLyrics", "playlistAddTrack", "copyLink"]
+                } else {
+                    menuItems = ["playNow", "playNext", "addToQueue", "getRecommendation", "getLyrics", "playlistAddTrack", "copyLink"]
+                }
             } else if (cardType == "playlist") {
                 options = { selectedplaylisthref: $card.data("href") }
-                menuItems = ["AddToQueue", "playlistCreate", "copyLink"]
+                menuItems = ["addToQueue", "playlistCreate", "copyLink"]
             }
         } else if ($target.closest("#search-result-tracks .track-row").length) {
             // Case: Right-click on "#search-result-tracks .track-row"
             const trackNumber = $target.closest(".track-row").index()
             const selectedTrackId = player.searchList[trackNumber]
             options = { selectedTrackId }
-            menuItems = ["playNow", "playNext", "AddToQueue", "getRecommendation", "getLyrics", "playlistAddTrack", "copyLink"]
+            menuItems = ["playNow", "playNext", "addToQueue", "getRecommendation", "getLyrics", "playlistAddTrack", "copyLink"]
         } else if ($target.closest('[id^="playlist-page"] .track-row').length) {
             // Case: Right-click on playlist-page ".track-row"
             const trackRow = $target.closest(".track-row")
@@ -1657,9 +1672,9 @@ $(document).ready(function () {
 
             const playlistType = player.playlists[options.selectedPlaylistId]?.type
             if (playlistType && !["link", "share"].includes(playlistType)) {
-                menuItems = ["playNow", "playNext", "AddToQueue", "playlistRemoveTrack", "getRecommendation", "getLyrics", "playlistAddTrack", "copyLink"]
+                menuItems = ["playNow", "playNext", "addToQueue", "playlistRemoveTrack", "getRecommendation", "getLyrics", "playlistAddTrack", "copyLink"]
             } else {
-                menuItems = ["playNow", "playNext", "AddToQueue", "getRecommendation", "getLyrics", "playlistAddTrack", "copyLink"]
+                menuItems = ["playNow", "playNext", "addToQueue", "getRecommendation", "getLyrics", "playlistAddTrack", "copyLink"]
             }
         } else if ($target.closest("#now-playing-section .track").length) {
             // Case: Right-click on "#now-playing-section .track"
@@ -1709,6 +1724,7 @@ $(document).ready(function () {
             getRecommendation: createActionElement("thumb_up", localeTexts.context.recommendation, "context-get-recommendation"),
             getLyrics: createActionElement("lyrics", localeTexts.context.getLyrics, "context-get-lyrics"),
             playlistShuffle: createActionElement("shuffle", localeTexts.context.playShuffle, "context-playlist-play-shuffle"),
+            removeFromHistory: createActionElement("manage_history", localeTexts.context.removeFromHistory, "context-remove-from-history", false, true),
             playlistRemoveTrack: createActionElement("do_not_disturb_on", localeTexts.context.removeTrack, "context-playlist-remove-track", false, true),
             playlistRemove: createActionElement("playlist_remove", localeTexts.playlist.delete.title, "context-playlist-remove"),
             playlistRename: createActionElement("bookmark", localeTexts.playlist.rename.title, "context-playlist-rename"),

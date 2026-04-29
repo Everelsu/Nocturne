@@ -396,6 +396,21 @@ async def getPlaylist(bot: commands.Bot, data: Dict) -> Dict:
     
     return payload
     
+async def removeFromHistory(bot: commands.Bot, data: Dict) -> Dict:
+    user_id = int(data.get("userId"))
+    track_id = data.get("trackId")
+
+    if not track_id:
+        return error_msg("Missing trackId for removeFromHistory.", user_id=user_id, level="error")
+
+    await MongoDBHandler.update_user(user_id, {"$pull": {"history": track_id}})
+
+    return {
+        "op": "removeFromHistory",
+        "status": "success",
+        "trackId": track_id,
+    }
+
 async def updatePlaylist(bot: commands.Bot, data: Dict) -> Dict:
     user_id = int(data.get("userId"))
     playlist_id = str(data.get("playlistId"))
@@ -715,6 +730,7 @@ METHODS: Dict[str, Union[SystemMethod, PlayerMethod]] = {
     "initBot": SystemMethod(initBot, credit=0),
     "initUser": SystemMethod(initUser, credit=2),
     "getPlaylist": SystemMethod(getPlaylist),
+    "removeFromHistory": SystemMethod(removeFromHistory, credit=2),
     "updatePlaylist": SystemMethod(updatePlaylist, credit=2),
     "getMutualGuilds": SystemMethod(getMutualGuilds),
     "getSettings": SystemMethod(getSettings),

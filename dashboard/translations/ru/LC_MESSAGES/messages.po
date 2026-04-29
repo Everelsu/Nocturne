@@ -645,6 +645,10 @@ msgid "Remove track"
 msgstr "Удалить трек"
 
 #: templates/index.html:217
+msgid "Remove from history"
+msgstr "Удалить из истории"
+
+#: templates/index.html:218
 msgid "Add to playlist"
 msgstr "Добавить в плейлист"
 

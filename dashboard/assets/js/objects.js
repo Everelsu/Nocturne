@@ -694,6 +694,15 @@ const methods = {
         );
     },
 
+    removeFromHistory: function (player, data) {
+        if (data.status === "success") {
+            $(`#history-tracks [data-id="${data.trackId}"]`).remove()
+            if ($("#history-tracks .card").length === 0) {
+                changePage("no-history-found")
+            }
+        }
+    },
+
     updatePlaylist: function (player, data) {
         let status = data.status;
 

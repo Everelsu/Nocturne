@@ -48,8 +48,8 @@ SETTINGS: Settings = Settings()
 app = Quart(__name__)
 app.secret_key = SETTINGS.secret_key
 
-babel = Babel(app)
-babel.init_app(app, locale_selector=get_locale)
+babel = Babel(locale_selector=get_locale)
+babel.init_app(app)
 
 load_dotenv()
 
