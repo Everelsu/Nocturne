@@ -16,7 +16,6 @@
 
 [build]
 builder = "DOCKERFILE"
-dockerfilePath = "Dockerfile"
 watchPatterns = ["lavalink2/**"]
 
 [deploy]
