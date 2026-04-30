@@ -30,6 +30,8 @@ import time
 import aiohttp
 import logging
 
+from collections import OrderedDict
+
 from discord import Client, Member
 from discord.ext.commands import Bot
 from typing import Dict, Optional, Union, List, Any, TYPE_CHECKING
@@ -60,6 +62,64 @@ if TYPE_CHECKING:
 URL_REGEX = re.compile(
     r"https?://(?:www\.)?.+"
 )
+
+# Search prefixes that are safe to cache (text searches only, not direct URLs)
+_CACHEABLE_PREFIXES = (
+    "ytsearch:", "ytmsearch:", "ymsearch:",
+    "spsearch:", "scsearch:", "amsearch:",
+    "dzsearch:", "vksearch:", "tdsearch:",
+)
+
+class _SearchCache:
+    """
+    Thread-safe LRU + TTL in-memory cache for Lavalink search results.
+
+    Only caches `search`-type responses so that direct URL loads
+    (which may have short-lived stream tokens) are always re-fetched.
+
+    Args:
+        maxsize: Maximum number of entries before the oldest is evicted.
+        ttl:     Time-to-live in seconds. Lavalink v4 encoded tracks don't
+                 embed stream URLs, so 30 min is comfortably safe.
+    """
+
+    def __init__(self, maxsize: int = 500, ttl: int = 1800) -> None:
+        self._cache: OrderedDict[str, tuple] = OrderedDict()
+        self._maxsize = maxsize
+        self._ttl = ttl
+
+    def get(self, key: str):
+        """Return (load_type, data) or None if missing / expired."""
+        entry = self._cache.get(key)
+        if entry is None:
+            return None
+        load_type, data, ts = entry
+        if time.monotonic() - ts > self._ttl:
+            del self._cache[key]
+            return None
+        self._cache.move_to_end(key)
+        return load_type, data
+
+    def set(self, key: str, load_type: str, data) -> None:
+        """Insert or refresh an entry, evicting the LRU item when full."""
+        if key in self._cache:
+            self._cache.move_to_end(key)
+        self._cache[key] = (load_type, data, time.monotonic())
+        if len(self._cache) > self._maxsize:
+            self._cache.popitem(last=False)
+
+    def invalidate(self, key: str) -> None:
+        self._cache.pop(key, None)
+
+    def clear(self) -> None:
+        self._cache.clear()
+
+    def __len__(self) -> int:
+        return len(self._cache)
+
+
+# Module-level singleton — shared across all Node instances.
+_search_cache = _SearchCache()
 
 NODE_VERSION = "v4"
 
@@ -395,9 +455,22 @@ class Node:
         """
         if not search_type:
             search_type = Config().search_platform
-            
+
         if not URL_REGEX.match(query) and ':' not in query:
             query = f"{search_type}:{query}"
+
+        # ── Cache look-up (text searches only) ─────────────────────────────
+        is_cacheable = query.startswith(_CACHEABLE_PREFIXES)
+        if is_cacheable:
+            cached = _search_cache.get(query)
+            if cached is not None:
+                load_type, data = cached
+                logging.getLogger("voicelink").debug(
+                    "Search cache HIT  [size=%d]: %s", len(_search_cache), query[:120]
+                )
+                if load_type == "search":
+                    return [Track(track_id=t["encoded"], info=t["info"], requester=requester) for t in data]
+        # ───────────────────────────────────────────────────────────────────
 
         response: dict[str, Any] = await self.send(RequestMethod.GET, f"loadtracks?identifier={quote(query)}")
         data = response.get("data")
@@ -405,7 +478,7 @@ class Node:
 
         if not load_type:
             raise TrackLoadError("There was an error while trying to load this track.")
-        
+
         elif load_type == "empty":
             return None
 
@@ -416,6 +489,8 @@ class Node:
             return Playlist(playlist_info=data["info"], tracks=data["tracks"], requester=requester)
 
         elif load_type == "search":
+            if is_cacheable:
+                _search_cache.set(query, load_type, data)
             return [Track(track_id=track["encoded"], info=track["info"], requester=requester) for track in data]
 
         elif load_type == "track":
