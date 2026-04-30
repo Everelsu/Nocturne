@@ -106,6 +106,9 @@ class Vocard(commands.Bot):
         await self.process_commands(message)
 
     async def setup_hook(self) -> None:
+        # Initialise runtime ban / service state from settings
+        func.init_runtime_state()
+
         # Connecting to MongoDB
         await MongoDBHandler.init(bot_config.mongodb_url, bot_config.mongodb_name)
 
@@ -204,7 +207,34 @@ class CommandCheck(discord.app_commands.CommandTree):
             if not channel_perm.read_messages or not channel_perm.send_messages:
                 await interaction.response.send_message("I don't have permission to read or send messages in this channel.", ephemeral=True)
                 return False
-            
+
+            # ── Owner bypass: bot_access_user skips all restrictions ───────
+            is_owner = interaction.user.id in bot_config.bot_access_user
+
+            # ── Banlist check ──────────────────────────────────────────────
+            if not is_owner and func.is_banned(interaction.user.id):
+                expiry = func.get_ban_expiry(interaction.user.id)
+                desc = "⛔ **You have been restricted from using this bot.**"
+                if expiry is not None:
+                    desc += f"\n\n⏱️ **Expires in:** {func.format_ban_remaining(expiry)}"
+                else:
+                    desc += "\n\n🔒 This restriction is **permanent**."
+                embed = discord.Embed(description=desc, color=0xFF2B5E)
+                embed.set_footer(text="If you believe this is a mistake, contact the server owner.")
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+                return False
+
+            # ── Service disabled check ─────────────────────────────────────
+            if not is_owner and not func.is_service_enabled():
+                reason = func.get_service_reason()
+                desc = "🔒 **The music service is temporarily disabled by the bot owner.**"
+                if reason:
+                    desc += f"\n\n> {reason}"
+                embed = discord.Embed(description=desc, color=0xFFAA00)
+                embed.set_footer(text="Please try again later.")
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+                return False
+
         return True
 
 async def get_prefix(bot: commands.Bot, message: discord.Message) -> str:

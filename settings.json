@@ -6,6 +6,9 @@
         "client_id": "",
         "prefix": "/",
         "bot_access_user": [490411567620423680],
+        "banlist": {},
+        "service_enabled": true,
+        "service_disabled_reason": "",
         "embed_color": "0xb3b3b3",
         "activity": [
             { "type": "listening", "name": "/help", "status": "online" }
@@ -139,6 +142,9 @@
         "client_id": "",
         "prefix": "/",
         "bot_access_user": [],
+        "banlist": {},
+        "service_enabled": true,
+        "service_disabled_reason": "",
         "embed_color": "0xb3b3b3",
         "activity": [
             { "type": "listening", "name": "/help", "status": "online" }

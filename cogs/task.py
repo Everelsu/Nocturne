@@ -33,6 +33,7 @@ class Task(commands.Cog):
         self.bot = bot
         self.activity_update.start()
         self.cache_cleaner.start()
+        self.ban_cleanup.start()
 
         self.current_act = 0
         self.placeholder = voicelink.BotPlaceholder(bot)
@@ -40,6 +41,7 @@ class Task(commands.Cog):
     def cog_unload(self):
         self.activity_update.cancel()
         self.cache_cleaner.cancel()
+        self.ban_cleanup.cancel()
     
     @tasks.loop(seconds=Config().timer_settings.get("bot_activity_update", 600))
     async def activity_update(self):
@@ -68,6 +70,13 @@ class Task(commands.Cog):
         await voicelink.MongoDBHandler.cleanup_cache()
         voicelink.clear_search_cache()
         func.logger.info("Search cache cleared.")
+
+    @tasks.loop(minutes=5)
+    async def ban_cleanup(self):
+        """Remove expired temporary bans every 5 minutes."""
+        cleaned = func.cleanup_expired_bans()
+        if cleaned:
+            func.logger.info(f"[BanCleanup] Removed {cleaned} expired temporary ban(s).")
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Task(bot))

@@ -124,6 +124,7 @@ plugins:
         clients:
         - TVHTML5_SIMPLY
         - TV
+        - WEB
         - ANDROID_VR
         - ANDROID_MUSIC
         - MUSIC
@@ -131,6 +132,10 @@ plugins:
         oauth:
             enabled: true
             refreshToken: "${YOUTUBE_OAUTH_TOKEN:}"
+        pot:
+            token: ""
+            visitorData: ""
+            poTokenIpRotationUrl: "${BGUTIL_POT_URL:http://bgutil-ytdlp-pot-provide.railway.internal:4416}"
         remoteCipher:
             enabled: true
             url: "${YT_CIPHER_URL:http://yt-cipher:8001}"
