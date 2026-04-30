@@ -750,6 +750,8 @@ $(document).ready(function () {
 
     $("#search-query").on("input", function () {
         clearTimeout(typingTimer)
+        const val = $(this).val()
+        $("#search-clear").toggle(val.length > 0)
         $("#search-loader").fadeIn(200)
         typingTimer = setTimeout(function () {
             let input = $("#search-query").val()
@@ -764,6 +766,15 @@ $(document).ready(function () {
                 $(".search-result").fadeOut(200)
             }
         }, doneTypingInterval)
+    })
+
+    $("#search-clear").on("click", function () {
+        clearTimeout(typingTimer)
+        $("#search-query").val("").focus()
+        $("#search-clear").hide()
+        $("#search-loader").fadeOut(200)
+        $(".search-result").fadeOut(200)
+        player.searchList = []
     })
 
     $("#position-bar").change(function () {

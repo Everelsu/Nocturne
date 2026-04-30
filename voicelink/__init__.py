@@ -33,6 +33,11 @@ from .exceptions import *
 from .filters import *
 from .objects import *
 from .pool import *
+from .pool import _search_cache as _sc
+
+def clear_search_cache() -> None:
+    """Clear the in-process Lavalink search result cache."""
+    _sc.clear()
 from .queue import *
 from .player import Player, connect_channel
 from .placeholders import PlayerPlaceholder, BotPlaceholder

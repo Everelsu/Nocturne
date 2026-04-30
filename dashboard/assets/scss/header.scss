@@ -72,6 +72,19 @@
             font-size: 1.25rem;
         }
 
+        .search-clear {
+            font-size: 1rem !important;
+            color: var(--text-muted);
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: color 0.15s;
+            line-height: 1;
+
+            &:hover {
+                color: var(--text);
+            }
+        }
+
         .search-result {
             position: absolute;
             display: none;

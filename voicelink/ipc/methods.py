@@ -409,6 +409,7 @@ async def removeFromHistory(bot: commands.Bot, data: Dict) -> Dict:
         "op": "removeFromHistory",
         "status": "success",
         "trackId": track_id,
+        "userId": str(user_id),
     }
 
 async def updatePlaylist(bot: commands.Bot, data: Dict) -> Dict:

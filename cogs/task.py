@@ -66,6 +66,8 @@ class Task(commands.Cog):
     @tasks.loop(seconds=Config().timer_settings.get("cache_cleanup", 43200))
     async def cache_cleaner(self):
         await voicelink.MongoDBHandler.cleanup_cache()
+        voicelink.clear_search_cache()
+        func.logger.info("Search cache cleared.")
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Task(bot))
