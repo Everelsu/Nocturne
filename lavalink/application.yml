@@ -1,6 +1,6 @@
 lavalink:
     server:
-        bufferDurationMs: 400
+        bufferDurationMs: 800
         filters:
             channelMix: true
             distortion: true
@@ -90,8 +90,8 @@ plugins:
             youtube: false
         providers:
         - ytsearch:"%ISRC%"
-        - ytsearch:%QUERY%
         - ymsearch:%QUERY%
+        - ytsearch:%QUERY%
         sources:
             applemusic: false
             deezer: false
@@ -121,18 +121,12 @@ plugins:
         allowDirectPlaylistIds: true
         allowDirectVideoIds: true
         allowSearch: true
-        clientOptions:
-            WEBEMBEDDED:
-                playlistLoading: false
-                searching: false
         clients:
+        - TVHTML5_SIMPLY
         - TV
-        - MUSIC
-        - WEB
         - ANDROID_VR
         - ANDROID_MUSIC
-        - WEBEMBEDDED
-        - TVHTML5_SIMPLY
+        - MUSIC
         enabled: true
         oauth:
             enabled: true
