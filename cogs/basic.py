@@ -361,16 +361,19 @@ class Basic(commands.Cog):
         if player.is_paused:
             return await send_localized_message(ctx, "player.controls.pause.error", ephemeral=True)
 
-        if not player.is_privileged(ctx.author):
+        if not player.is_user_join(ctx.author):
+            return await send_localized_message(ctx, "voice.connection.notInChannel", ctx.author.mention, player.channel.mention, ephemeral=True)
+
+        if not player.is_privileged(ctx.author, check_user_join=False):
             if ctx.author in player.pause_votes:
                 return await send_localized_message(ctx, "voting.voted", ephemeral=True)
-            
+
             player.pause_votes.add(ctx.author)
             if len(player.pause_votes) < (required := player.required()):
                 return await send_localized_message(ctx, "player.controls.pause.vote", ctx.author, len(player.pause_votes), required)
 
         await player.set_pause(True, ctx.author)
-        await send_localized_message(ctx, player.controls.pause.success, ctx.author)
+        await send_localized_message(ctx, "player.controls.pause.success", ctx.author)
 
     @commands.hybrid_command(name="resume", aliases=get_aliases("resume"))
     @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
@@ -383,10 +386,13 @@ class Basic(commands.Cog):
         if not player.is_paused:
             return await send_localized_message(ctx, "player.controls.resume.error")
 
-        if not player.is_privileged(ctx.author):
+        if not player.is_user_join(ctx.author):
+            return await send_localized_message(ctx, "voice.connection.notInChannel", ctx.author.mention, player.channel.mention, ephemeral=True)
+
+        if not player.is_privileged(ctx.author, check_user_join=False):
             if ctx.author in player.resume_votes:
                 return await send_localized_message(ctx, "voting.voted", ephemeral=True)
-            
+
             player.resume_votes.add(ctx.author)
             if len(player.resume_votes) < (required := player.required()):
                 return await send_localized_message(ctx, "player.controls.resume.vote", ctx.author, len(player.resume_votes), required)
@@ -409,7 +415,10 @@ class Basic(commands.Cog):
         if not player.is_playing:
             return await send_localized_message(ctx, "player.controls.skip.error", ephemeral=True)
 
-        if not player.is_privileged(ctx.author):
+        if not player.is_user_join(ctx.author):
+            return await send_localized_message(ctx, "voice.connection.notInChannel", ctx.author.mention, player.channel.mention, ephemeral=True)
+
+        if not player.is_privileged(ctx.author, check_user_join=False):
             if ctx.author == player.current.requester:
                 pass
             elif ctx.author in player.skip_votes:
@@ -440,10 +449,13 @@ class Basic(commands.Cog):
         if not player.node._available:
             return await send_localized_message(ctx, "player.errors.nodeReconnectode")
         
-        if not player.is_privileged(ctx.author):
+        if not player.is_user_join(ctx.author):
+            return await send_localized_message(ctx, "voice.connection.notInChannel", ctx.author.mention, player.channel.mention, ephemeral=True)
+
+        if not player.is_privileged(ctx.author, check_user_join=False):
             if ctx.author in player.previous_votes:
                 return await send_localized_message(ctx, "voting.voted", ephemeral=True)
-            
+
             player.previous_votes.add(ctx.author)
             if len(player.previous_votes) < (required := player.required()):
                 return await send_localized_message(ctx, "player.controls.back.vote", ctx.author, len(player.previous_votes), required)
@@ -593,14 +605,15 @@ class Basic(commands.Cog):
         if not player:
             return await send_localized_message(ctx, "player.errors.noPlayer", ephemeral=True)
 
-        if not player.is_privileged(ctx.author):
+        if not player.is_user_join(ctx.author):
+            return await send_localized_message(ctx, "voice.connection.notInChannel", ctx.author.mention, player.channel.mention, ephemeral=True)
+
+        if not player.is_privileged(ctx.author, check_user_join=False):
             if ctx.author in player.stop_votes:
                 return await send_localized_message(ctx, "voting.voted", ephemeral=True)
             else:
                 player.stop_votes.add(ctx.author)
-                if len(player.stop_votes) >= (required := player.required(leave=True)):
-                    pass
-                else:
+                if len(player.stop_votes) < (required := player.required(leave=True)):
                     return await send_localized_message(ctx, "player.controls.leave.vote", ctx.author, len(player.stop_votes), required)
 
         await send_localized_message(ctx, "player.controls.leave.success", ctx.author)
@@ -743,14 +756,17 @@ class Basic(commands.Cog):
         if not player:
             return await send_localized_message(ctx, "player.errors.noPlayer", ephemeral=True)
 
-        if not player.is_privileged(ctx.author):
+        if not player.is_user_join(ctx.author):
+            return await send_localized_message(ctx, "voice.connection.notInChannel", ctx.author.mention, player.channel.mention, ephemeral=True)
+
+        if not player.is_privileged(ctx.author, check_user_join=False):
             if ctx.author in player.shuffle_votes:
                 return await send_localized_message(ctx, "voting.voted", ephemeral=True)
-            
+
             player.shuffle_votes.add(ctx.author)
             if len(player.shuffle_votes) < (required := player.required()):
                 return await send_localized_message(ctx, "player.controls.shuffle.vote", ctx.author, len(player.shuffle_votes), required)
-        
+
         await player.shuffle("queue", ctx.author)
         await send_localized_message(ctx, "player.controls.shuffle.success")
 

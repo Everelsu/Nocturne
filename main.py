@@ -197,6 +197,38 @@ class Vocard(commands.Bot):
             pass
 
 class CommandCheck(discord.app_commands.CommandTree):
+    async def on_error(
+        self,
+        interaction: discord.Interaction,
+        error: discord.app_commands.AppCommandError,
+    ) -> None:
+        """Handle errors from pure app commands and hybrid-as-slash commands.
+
+        VoicelinkException (not-in-channel, queue full, etc.) must reach the
+        user as an ephemeral message instead of being silently swallowed.
+        All other errors are logged and a generic message is shown.
+        """
+        cause = getattr(error, "original", error)
+
+        if isinstance(cause, VoicelinkException):
+            msg = str(cause)
+        else:
+            cmd_name = interaction.command.name if interaction.command else "unknown"
+            func.logger.error(
+                f"Unhandled app command error in /{cmd_name} "
+                f"(guild={interaction.guild_id}, user={interaction.user.id})",
+                exc_info=cause,
+            )
+            msg = "An unexpected error occurred. Please try again later."
+
+        try:
+            if interaction.response.is_done():
+                await interaction.followup.send(msg, ephemeral=True)
+            else:
+                await interaction.response.send_message(msg, ephemeral=True)
+        except Exception:
+            pass
+
     async def interaction_check(self, interaction: discord.Interaction, /) -> bool:
         if interaction.type == discord.InteractionType.application_command:
             if not interaction.guild:

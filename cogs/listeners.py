@@ -38,6 +38,9 @@ class Listeners(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.voicelink = voicelink.NodePool()
+        # Guild IDs where we're currently executing our own snap-back move,
+        # so the resulting VOICE_STATE_UPDATE doesn't trigger another snap-back.
+        self._snap_pending: set[int] = set()
 
     async def cog_load(self) -> None:
         asyncio.ensure_future(self.start_nodes())
@@ -201,6 +204,36 @@ class Listeners(commands.Cog):
     @commands.Cog.listener()
     async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
         if member.bot:
+            # ── Anti-steal: detect when OUR bot is physically dragged ────
+            if member.id == self.bot.user.id:
+                guild_id = member.guild.id
+
+                # If this VOICE_STATE_UPDATE is our own snap-back completing — ignore it
+                if guild_id in self._snap_pending:
+                    self._snap_pending.discard(guild_id)
+                    return
+
+                # Drag detected: moved from one channel to another while session is active
+                if (before.channel and after.channel
+                        and before.channel.id != after.channel.id):
+                    player: voicelink.Player = member.guild.voice_client
+                    if player and (player.is_playing or not player.queue.is_empty):
+                        try:
+                            self._snap_pending.add(guild_id)
+                            await member.guild.change_voice_state(
+                                channel=before.channel, self_deaf=True
+                            )
+                            func.logger.warning(
+                                f"[AntiSteal] Resisted channel drag in "
+                                f"{member.guild.name}({guild_id}): "
+                                f"'{after.channel.name}' → back to '{before.channel.name}'"
+                            )
+                        except Exception as e:
+                            self._snap_pending.discard(guild_id)
+                            func.logger.error(
+                                f"[AntiSteal] Failed to snap back in "
+                                f"{member.guild.name}({guild_id}): {e}"
+                            )
             return
         
         if before.channel == after.channel:
