@@ -258,6 +258,8 @@ const methods = {
                 }
             }
 
+            player.historyTracks = uniqueTracks;
+
             for (var track of uniqueTracks) {
                 historyTracks.append(buildTrackCardHtml(track));
             }
@@ -1051,6 +1053,7 @@ class Player {
         this.channelName = "";
         this.playlists = [];
         this.inboxes = [];
+        this.historyTracks = [];
 
         this.currentSettings = {};
         this.modifySettings = {};

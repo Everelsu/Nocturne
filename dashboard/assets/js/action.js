@@ -849,6 +849,10 @@ $(document).ready(function () {
                     return buildExplorePage()
                 }
 
+                if (pageName == "stats-page") {
+                    return renderStatsPage()
+                }
+
                 if (pageName == "create-playlist") {
                     if (player.selectedBot == undefined) {
                         return player.tm.showToast("error", localeTexts.errors.noPlayerError)
@@ -1941,6 +1945,97 @@ $(document).ready(function () {
             })
         }
         changePage("explore-page", true, false)
+    }
+
+    function renderStatsPage() {
+        const tracks = player.historyTracks || []
+
+        // ── Overview cards ───────────────────────────────────────────────
+        const totalTracks  = tracks.length
+        const uniqueUris   = new Set(tracks.map(t => t.uri)).size
+        let   totalMs      = 0
+
+        const sourceCounts  = {}
+        const artistCounts  = {}
+        const uriPlayCounts = {}
+
+        for (const t of tracks) {
+            totalMs += (t.length || 0)
+
+            // source
+            const src = (t.sourceName || "others").toLowerCase()
+            sourceCounts[src] = (sourceCounts[src] || 0) + 1
+
+            // artist
+            const artist = t.author || t.artist || "Unknown"
+            artistCounts[artist] = (artistCounts[artist] || 0) + 1
+
+            // per-track play count (by URI)
+            if (t.uri) uriPlayCounts[t.uri] = (uriPlayCounts[t.uri] || 0) + 1
+        }
+
+        // Total listening time
+        const totalSec = Math.floor(totalMs / 1000)
+        const hh = Math.floor(totalSec / 3600)
+        const mm = Math.floor((totalSec % 3600) / 60)
+        const timeStr = hh > 0 ? `${hh}h ${mm}m` : `${mm}m`
+
+        const topSource = Object.entries(sourceCounts).sort((a,b)=>b[1]-a[1])[0]
+
+        $("#stat-total-tracks").text(totalTracks)
+        $("#stat-total-time").text(totalMs > 0 ? timeStr : "—")
+        $("#stat-unique-tracks").text(uniqueUris)
+        $("#stat-top-source").text(topSource ? capitalize(topSource[0]) : "—")
+
+        // ── Source bars ──────────────────────────────────────────────────
+        const $sources = $("#stats-sources").empty()
+        const sortedSources = Object.entries(sourceCounts).sort((a,b)=>b[1]-a[1])
+        const maxSrc = sortedSources[0]?.[1] || 1
+        for (const [name, count] of sortedSources) {
+            const pct = Math.round((count / totalTracks) * 100)
+            const barPct = Math.round((count / maxSrc) * 100)
+            $sources.append(`
+                <div class="stat-bar-row">
+                    <span class="stat-bar-label">${capitalize(name)}</span>
+                    <div class="stat-bar-track">
+                        <div class="stat-bar-fill" style="width:${barPct}%"></div>
+                    </div>
+                    <span class="stat-bar-count">${pct}%</span>
+                </div>`)
+        }
+
+        // ── Top artists ──────────────────────────────────────────────────
+        const $artists = $("#stats-artists").empty()
+        const topArtists = Object.entries(artistCounts).sort((a,b)=>b[1]-a[1]).slice(0, 10)
+        for (const [name, count] of topArtists) {
+            $artists.append(`
+                <div class="stat-artist-row">
+                    <span class="material-symbols-outlined">person</span>
+                    <span class="stat-artist-name">${escapeHtml(name)}</span>
+                    <span class="stat-artist-count">${count} ${count === 1 ? "track" : "tracks"}</span>
+                </div>`)
+        }
+
+        // ── Top tracks (by play count, fallback order = history order) ───
+        const $topTracks = $("#stats-top-tracks").empty()
+        const sorted = [...tracks].sort((a,b) => {
+            const ca = uriPlayCounts[a.uri] || 1
+            const cb = uriPlayCounts[b.uri] || 1
+            return cb - ca
+        }).slice(0, 10)
+        for (const t of sorted) {
+            $topTracks.append(buildTrackCardHtml(t))
+        }
+
+        changePage("stats-page", true, false)
+    }
+
+    function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1)
+    }
+
+    function escapeHtml(str) {
+        return $("<div>").text(str).html()
     }
 
     // --- Mobile Overlay Logic for Menu and Queue ---

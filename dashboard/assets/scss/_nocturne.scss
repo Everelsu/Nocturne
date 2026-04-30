@@ -745,6 +745,160 @@ html.light-theme {
 }
 
 /* ════════════════════════════════════════
+   STATS PAGE
+   ════════════════════════════════════════ */
+
+.stats-overview {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+	gap: 16px;
+	margin-bottom: 24px;
+
+	.stat-card {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		padding: 18px 20px;
+		background: var(--bg-light);
+		border: 1px solid var(--border);
+
+		.material-symbols-outlined {
+			font-size: 28px;
+			color: var(--accent);
+			flex-shrink: 0;
+		}
+
+		.stat-info {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+
+			.stat-label {
+				font-size: 11px;
+				color: var(--font-light);
+				text-transform: uppercase;
+				letter-spacing: 0.06em;
+			}
+
+			.stat-value {
+				font-size: 20px;
+				font-weight: 700;
+				color: var(--font);
+				line-height: 1.2;
+			}
+		}
+	}
+}
+
+.stats-charts {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+	margin-bottom: 24px;
+
+	@media (max-width: 768px) {
+		grid-template-columns: 1fr;
+	}
+
+	.stats-panel {
+		padding: 20px 22px;
+		background: var(--bg-light);
+		border: 1px solid var(--border);
+
+		h3 {
+			font-size: 13px;
+			font-weight: 600;
+			color: var(--font-light);
+			text-transform: uppercase;
+			letter-spacing: 0.06em;
+			margin-bottom: 16px;
+		}
+	}
+}
+
+.stats-bar-list {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+
+	.stat-bar-row {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+
+		.stat-bar-label {
+			min-width: 90px;
+			font-size: 13px;
+			color: var(--font);
+		}
+
+		.stat-bar-track {
+			flex: 1;
+			height: 6px;
+			background: var(--bg);
+			border-radius: 3px;
+			overflow: hidden;
+
+			.stat-bar-fill {
+				height: 100%;
+				background: var(--accent);
+				border-radius: 3px;
+				transition: width 0.4s ease;
+			}
+		}
+
+		.stat-bar-count {
+			min-width: 36px;
+			text-align: right;
+			font-size: 12px;
+			color: var(--font-light);
+		}
+	}
+}
+
+.stats-artist-list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	.stat-artist-row {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		padding: 6px 0;
+		border-bottom: 1px solid var(--border);
+
+		&:last-child { border-bottom: none; }
+
+		.material-symbols-outlined {
+			font-size: 16px;
+			color: var(--font-light);
+		}
+
+		.stat-artist-name {
+			flex: 1;
+			font-size: 13px;
+			color: var(--font);
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+
+		.stat-artist-count {
+			font-size: 12px;
+			color: var(--font-light);
+			flex-shrink: 0;
+		}
+	}
+}
+
+html.rounded {
+	.stats-overview .stat-card    { border-radius: 12px; }
+	.stats-charts .stats-panel    { border-radius: 12px; }
+	.stats-bar-list .stat-bar-fill { border-radius: 3px; }
+}
+
+/* ════════════════════════════════════════
    SKELETON
    ════════════════════════════════════════ */
 

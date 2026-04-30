@@ -406,6 +406,65 @@
                     </div>
                     {% include "footer.html" %}
                 </div>
+                <div class="sections" id="stats-page">
+                    <div class="section">
+                        <div class="header">
+                            <div class="sub-title">
+                                <p>{{ _("Based on your listening history") }}</p>
+                                <h2>{{ _("Your Stats") }}</h2>
+                            </div>
+                        </div>
+                        <div class="stats-overview" id="stats-overview">
+                            <div class="stat-card">
+                                <span class="material-symbols-outlined">music_note</span>
+                                <div class="stat-info">
+                                    <p class="stat-label">{{ _("Tracks played") }}</p>
+                                    <p class="stat-value" id="stat-total-tracks">—</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <span class="material-symbols-outlined">schedule</span>
+                                <div class="stat-info">
+                                    <p class="stat-label">{{ _("Listening time") }}</p>
+                                    <p class="stat-value" id="stat-total-time">—</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <span class="material-symbols-outlined">album</span>
+                                <div class="stat-info">
+                                    <p class="stat-label">{{ _("Unique tracks") }}</p>
+                                    <p class="stat-value" id="stat-unique-tracks">—</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <span class="material-symbols-outlined">favorite</span>
+                                <div class="stat-info">
+                                    <p class="stat-label">{{ _("Top source") }}</p>
+                                    <p class="stat-value" id="stat-top-source">—</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stats-charts">
+                        <div class="stats-panel" id="stats-sources-panel">
+                            <h3>{{ _("Playback by source") }}</h3>
+                            <div class="stats-bar-list" id="stats-sources"></div>
+                        </div>
+                        <div class="stats-panel" id="stats-artists-panel">
+                            <h3>{{ _("Top artists") }}</h3>
+                            <div class="stats-artist-list" id="stats-artists"></div>
+                        </div>
+                    </div>
+                    <div class="section">
+                        <div class="header">
+                            <div class="sub-title">
+                                <h2>{{ _("Most played tracks") }}</h2>
+                            </div>
+                        </div>
+                        <div class="card-container" id="stats-top-tracks"></div>
+                    </div>
+                    {% include "footer.html" %}
+                </div>
                 <div class="sections" id="user-settings-page">
                     <div class="section">
                         <div class="header">

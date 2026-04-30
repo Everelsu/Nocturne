@@ -653,23 +653,24 @@ class Player(VoiceProtocol):
     async def add_track(self, raw_tracks: Union[Track, List[Track]], *, start_time: int = 0, end_time: int = 0, at_front: bool = False, duplicate: bool = True) -> int:
         """Adds one or more tracks to the queue."""
         tracks: List[Track] = []
-        _duplicate_tracks = [] if self.queue._allow_duplicate and duplicate else [track.uri for track in self.queue._queue]
+        # Use a set for O(1) duplicate lookups instead of O(n) list scans
+        _duplicate_uris: set = set() if self.queue._allow_duplicate and duplicate else {track.uri for track in self.queue._queue}
         raw_tracks = raw_tracks[0] if isinstance(raw_tracks, List) and len(raw_tracks) == 1 else raw_tracks
 
         result = None
         try:
             if (is_list := isinstance(raw_tracks, List)):
                 for track in raw_tracks:
-                    if track.uri in _duplicate_tracks:
+                    if track.uri in _duplicate_uris:
                         continue
 
                     self._validate_time(track, start_time, end_time)
                     self.queue.put_at_front(track) if at_front else self.queue.put(track)
                     tracks.append(track)
-                    _duplicate_tracks.append(track.uri)
+                    _duplicate_uris.add(track.uri)
                 result = len(tracks)
             else:
-                if raw_tracks.uri in _duplicate_tracks:
+                if raw_tracks.uri in _duplicate_uris:
                     raise DuplicateTrack(self.get_msg("queue.errors.duplicateTrack"))
 
                 self._validate_time(raw_tracks, start_time, end_time)

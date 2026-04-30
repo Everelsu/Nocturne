@@ -191,6 +191,8 @@ class Listeners(commands.Cog):
             await player.context.send(f"{error['message']} The next song will begin in the next 5 seconds.", delete_after=10)
         except:
             pass
+        await asyncio.sleep(5)
+        await player.do_next()
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
@@ -240,7 +242,7 @@ class Listeners(commands.Cog):
                     "avatarUrl": member.display_avatar.url,
                     "name": member.name,
                 },
-                "channelName": member.voice.channel.name if is_joined else "",
+                "channelName": after.channel.name if is_joined and after.channel else "",
                 "guildId": str(member.guild.id),
                 "isJoined": is_joined
             })
