@@ -68,6 +68,11 @@ async def connect_channel(member: Member, bot: commands.Bot) -> Player:
     try:
         settings = await MongoDBHandler.get_settings(channel.guild.id)
         player: Player = await channel.connect(cls=Player(bot, channel, TempCtx(member, channel), settings))
+
+        # Apply saved guild volume — Lavalink defaults to 100 on every new player
+        if player._volume != 100:
+            await player.set_volume(player._volume)
+
         await player.send_ws({"op": "createPlayer", "memberIds": [str(member.id) for member in channel.members]})
         return player
     except:
@@ -191,13 +196,13 @@ async def backTo(player: Player, member: Member, data: Dict) -> None:
         if player.current and member == player.current.requester:
             pass
 
-        elif member in player.skip_votes:
+        elif member in player.previous_votes:
             return error_msg(player.get_msg('voting.voted'), user_id=member.id)
-        
+
         else:
-            player.skip_votes.add(member)
-            if len(player.skip_votes) < (required := player.required()):
-                return error_msg(player.get_msg('player.controls.back.vote').format(member, len(player.skip_votes), required), guild_id=player.guild.id)
+            player.previous_votes.add(member)
+            if len(player.previous_votes) < (required := player.required()):
+                return error_msg(player.get_msg('player.controls.back.vote').format(member, len(player.previous_votes), required), guild_id=player.guild.id)
     
     index = data.get("index", 1)
     if not player.is_playing:
@@ -266,7 +271,7 @@ async def shuffleTrack(player: Player, member: Member, data: Dict) -> None:
 
         player.shuffle_votes.add(member)
         if len(player.shuffle_votes) < (required := player.required()):
-            return error_msg(player.get_msg('player.controls.shuffle.vote').format(member, len(player.skip_votes), required), guild_id=player.guild.id)
+            return error_msg(player.get_msg('player.controls.shuffle.vote').format(member, len(player.shuffle_votes), required), guild_id=player.guild.id)
     
     await player.shuffle(data.get("type", "queue"), member)
 

@@ -113,13 +113,17 @@ class Listeners(commands.Cog):
                 player.dj = dj_member
                 player.settings['autoplay'] = data.get('autoplay', False)
 
+                # Re-apply guild volume — Lavalink always starts a session at 100
+                if player._volume != 100:
+                    await player.set_volume(player._volume)
+
                 # Resume playback or invoke the controller based on the player's state.
                 if not player.is_playing:
                     await player.do_next()
 
                     if is_paused := data.get("is_paused"):
                         await player.set_pause(is_paused, self.bot.user)
-                    
+
                     if position := data.get("position"):
                         await player.seek(int(position), self.bot.user)
 

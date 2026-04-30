@@ -308,7 +308,7 @@ class Player(VoiceProtocol):
             raise VoicelinkException(self.get_msg('voice.connection.notInChannel').format(user.mention, self.channel.mention))
             
         if 'dj' in self.settings and self.settings['dj']:
-            return manage_perm or (self.settings['dj'] in [role.id for role in user.roles])
+            return manage_perm or self.dj.id == user.id or (self.settings['dj'] in [role.id for role in user.roles])
         return self.dj.id == user.id or manage_perm
     
     def build_embed(self, current_track: Track = None):
@@ -877,6 +877,10 @@ class Player(VoiceProtocol):
         self._node._players[self.guild.id] = self
 
         await self._dispatch_voice_update(self._voice_state)
+
+        # Re-apply volume — new node always starts at 100 by default
+        if self._volume != 100:
+            await self.set_volume(self._volume)
 
         if self.current:
             await self.play(self.current, start=self.position)
