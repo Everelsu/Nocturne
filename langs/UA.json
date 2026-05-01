@@ -140,6 +140,11 @@
         "permissions": {
             "title": "✨ Права:",
             "value": "```{0} Адміністратор\n{1} Керування_Сервером\n{2} Керування_Каналом\n{3} Керування_Сообщениями```"
+        },
+        "sources": {
+            "blocked": "❌ The **{0}** source is disabled on this server.",
+            "enabled": "✅ **{0}** has been enabled on this server.",
+            "disabled": "❌ **{0}** has been disabled on this server."
         }
     },
     "ping": {

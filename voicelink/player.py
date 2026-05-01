@@ -554,7 +554,10 @@ class Player(VoiceProtocol):
             source = get_query_source(query, search_type)
             if source and source in disabled_sources:
                 display = KNOWN_SOURCES.get(source, source)
-                raise VoicelinkException(f"❌ The **{display}** source is disabled on this server.")
+                text = await LangHandler.get_lang(self.guild.id, "settings.sources.blocked")
+                if not text or text == "Not found!":
+                    text = "❌ The **{0}** source is disabled on this server."
+                raise VoicelinkException(text.format(display))
         # ────────────────────────────────────────────────────────────────
 
         return await self._node.get_tracks(query, requester=requester, search_type=search_type)

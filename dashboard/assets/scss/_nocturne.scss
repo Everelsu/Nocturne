@@ -848,11 +848,26 @@ html.light-theme {
 		}
 
 		.stat-bar-count {
-			min-width: 36px;
+			min-width: 60px;
 			text-align: right;
 			font-size: 12px;
 			color: var(--font-light);
+			white-space: nowrap;
+
+			.stat-bar-pct {
+				margin-left: 4px;
+				opacity: 0.55;
+				font-size: 11px;
+			}
 		}
+	}
+
+	.stats-empty {
+		font-size: 13px;
+		color: var(--font-light);
+		text-align: center;
+		padding: 24px 0;
+		opacity: 0.7;
 	}
 }
 

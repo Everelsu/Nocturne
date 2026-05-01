@@ -218,6 +218,11 @@
                     removeFromHistory: "{{ _('Remove from history') }}",
                     addToPlaylist: "{{ _('Add to playlist') }}",
                 },
+                stats: {
+                    noHistory: "{{ _('No listening history yet.') }}",
+                    track: "{{ _('track') }}",
+                    tracks: "{{ _('tracks') }}",
+                },
             }
         </script>
 
@@ -437,9 +442,9 @@
                                 </div>
                             </div>
                             <div class="stat-card">
-                                <span class="material-symbols-outlined">favorite</span>
+                                <span class="material-symbols-outlined">stream</span>
                                 <div class="stat-info">
-                                    <p class="stat-label">{{ _("Top source") }}</p>
+                                    <p class="stat-label">{{ _("Top platform") }}</p>
                                     <p class="stat-value" id="stat-top-source">—</p>
                                 </div>
                             </div>
@@ -447,7 +452,7 @@
                     </div>
                     <div class="stats-charts">
                         <div class="stats-panel" id="stats-sources-panel">
-                            <h3>{{ _("Playback by source") }}</h3>
+                            <h3>{{ _("By platform") }}</h3>
                             <div class="stats-bar-list" id="stats-sources"></div>
                         </div>
                         <div class="stats-panel" id="stats-artists-panel">

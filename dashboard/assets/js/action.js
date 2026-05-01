@@ -1947,10 +1947,48 @@ $(document).ready(function () {
         changePage("explore-page", true, false)
     }
 
+    // ── Human-readable names for Lavalink sourceName values ─────────────
+    const SOURCE_DISPLAY_NAMES = {
+        youtube:      "YouTube",
+        youtubemusic: "YouTube Music",
+        spotify:      "Spotify",
+        soundcloud:   "SoundCloud",
+        applemusic:   "Apple Music",
+        deezer:       "Deezer",
+        yandexmusic:  "Yandex Music",
+        vkmusic:      "VK Music",
+        tidal:        "Tidal",
+        qobuz:        "Qobuz",
+        jiosaavn:     "JioSaavn",
+        bandcamp:     "Bandcamp",
+        twitch:       "Twitch",
+        vimeo:        "Vimeo",
+        http:         "Direct URL",
+        local:        "Local",
+    }
+
+    function getSourceDisplayName(src) {
+        return SOURCE_DISPLAY_NAMES[(src || "").toLowerCase()] || capitalize(src || "Other")
+    }
+
     function renderStatsPage() {
         const tracks = player.historyTracks || []
 
-        // ── Overview cards ───────────────────────────────────────────────
+        // ── Empty state ──────────────────────────────────────────────────
+        if (tracks.length === 0) {
+            $("#stat-total-tracks").text("—")
+            $("#stat-total-time").text("—")
+            $("#stat-unique-tracks").text("—")
+            $("#stat-top-source").text("—")
+            $("#stats-sources").empty().append(
+                `<p class="stats-empty">${localeTexts.stats?.noHistory || "No listening history yet."}</p>`
+            )
+            $("#stats-artists").empty()
+            $("#stats-top-tracks").empty()
+            return changePage("stats-page", true, false)
+        }
+
+        // ── Aggregate ────────────────────────────────────────────────────
         const totalTracks  = tracks.length
         const uniqueUris   = new Set(tracks.map(t => t.uri)).size
         let   totalMs      = 0
@@ -1962,19 +2000,16 @@ $(document).ready(function () {
         for (const t of tracks) {
             totalMs += (t.length || 0)
 
-            // source
-            const src = (t.sourceName || "others").toLowerCase()
+            const src = (t.sourceName || "other").toLowerCase()
             sourceCounts[src] = (sourceCounts[src] || 0) + 1
 
-            // artist
             const artist = t.author || t.artist || "Unknown"
             artistCounts[artist] = (artistCounts[artist] || 0) + 1
 
-            // per-track play count (by URI)
             if (t.uri) uriPlayCounts[t.uri] = (uriPlayCounts[t.uri] || 0) + 1
         }
 
-        // Total listening time
+        // ── Overview cards ───────────────────────────────────────────────
         const totalSec = Math.floor(totalMs / 1000)
         const hh = Math.floor(totalSec / 3600)
         const mm = Math.floor((totalSec % 3600) / 60)
@@ -1983,24 +2018,28 @@ $(document).ready(function () {
         const topSource = Object.entries(sourceCounts).sort((a,b)=>b[1]-a[1])[0]
 
         $("#stat-total-tracks").text(totalTracks)
-        $("#stat-total-time").text(totalMs > 0 ? timeStr : "—")
+        $("#stat-total-time").text(timeStr)
         $("#stat-unique-tracks").text(uniqueUris)
-        $("#stat-top-source").text(topSource ? capitalize(topSource[0]) : "—")
+        $("#stat-top-source").text(topSource ? getSourceDisplayName(topSource[0]) : "—")
 
         // ── Source bars ──────────────────────────────────────────────────
         const $sources = $("#stats-sources").empty()
         const sortedSources = Object.entries(sourceCounts).sort((a,b)=>b[1]-a[1])
         const maxSrc = sortedSources[0]?.[1] || 1
-        for (const [name, count] of sortedSources) {
-            const pct = Math.round((count / totalTracks) * 100)
+        const trackWord  = localeTexts.stats?.track  || "track"
+        const tracksWord = localeTexts.stats?.tracks || "tracks"
+
+        for (const [src, count] of sortedSources) {
+            const pct    = Math.round((count / totalTracks) * 100)
             const barPct = Math.round((count / maxSrc) * 100)
+            const label  = getSourceDisplayName(src)
             $sources.append(`
                 <div class="stat-bar-row">
-                    <span class="stat-bar-label">${capitalize(name)}</span>
+                    <span class="stat-bar-label">${escapeHtml(label)}</span>
                     <div class="stat-bar-track">
                         <div class="stat-bar-fill" style="width:${barPct}%"></div>
                     </div>
-                    <span class="stat-bar-count">${pct}%</span>
+                    <span class="stat-bar-count">${count} <span class="stat-bar-pct">${pct}%</span></span>
                 </div>`)
         }
 
@@ -2008,15 +2047,16 @@ $(document).ready(function () {
         const $artists = $("#stats-artists").empty()
         const topArtists = Object.entries(artistCounts).sort((a,b)=>b[1]-a[1]).slice(0, 10)
         for (const [name, count] of topArtists) {
+            const word = count === 1 ? trackWord : tracksWord
             $artists.append(`
                 <div class="stat-artist-row">
                     <span class="material-symbols-outlined">person</span>
                     <span class="stat-artist-name">${escapeHtml(name)}</span>
-                    <span class="stat-artist-count">${count} ${count === 1 ? "track" : "tracks"}</span>
+                    <span class="stat-artist-count">${count} ${word}</span>
                 </div>`)
         }
 
-        // ── Top tracks (by play count, fallback order = history order) ───
+        // ── Top tracks ───────────────────────────────────────────────────
         const $topTracks = $("#stats-top-tracks").empty()
         const sorted = [...tracks].sort((a,b) => {
             const ca = uriPlayCounts[a.uri] || 1

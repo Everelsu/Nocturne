@@ -140,6 +140,11 @@
         "permissions": {
             "title": "✨ Quyền hạn:",
             "value": "```{0} Quản Trị Viên\n{1} Quản_Lý_Guild\n{2} Quản_Lý_Kênh\n{3} Quản_Lý_Tin_Nhắn```"
+        },
+        "sources": {
+            "blocked": "❌ The **{0}** source is disabled on this server.",
+            "enabled": "✅ **{0}** has been enabled on this server.",
+            "disabled": "❌ **{0}** has been disabled on this server."
         }
     },
     "ping": {

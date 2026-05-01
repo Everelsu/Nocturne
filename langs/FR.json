@@ -140,6 +140,11 @@
         "permissions": {
             "title": "✨ Permissions :",
             "value": "```{0} Administrateur\n{1} Gérer_serveur\n{2} Gérer_salons\n{3} Gérer_messages```"
+        },
+        "sources": {
+            "blocked": "❌ The **{0}** source is disabled on this server.",
+            "enabled": "✅ **{0}** has been enabled on this server.",
+            "disabled": "❌ **{0}** has been disabled on this server."
         }
     },
     "ping": {

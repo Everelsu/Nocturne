@@ -140,6 +140,11 @@
         "permissions": {
             "title": "✨ 権限：",
             "value": "```{0} 管理者\n{1} ギルド管理\n{2} チャンネル管理\n{3} メッセージ管理```"
+        },
+        "sources": {
+            "blocked": "❌ The **{0}** source is disabled on this server.",
+            "enabled": "✅ **{0}** has been enabled on this server.",
+            "disabled": "❌ **{0}** has been disabled on this server."
         }
     },
     "ping": {

@@ -382,10 +382,12 @@ class Settings(commands.Cog, name="settings"):
 
         if source in disabled:
             disabled.remove(source)
-            icon, state = "✅", "enabled"
+            lang_key = "settings.sources.enabled"
+            fallback = f"✅ **{display}** has been enabled on this server."
         else:
             disabled.append(source)
-            icon, state = "❌", "disabled"
+            lang_key = "settings.sources.disabled"
+            fallback = f"❌ **{display}** has been disabled on this server."
 
         await MongoDBHandler.update_settings(ctx.guild.id, {"$set": {"disabled_sources": disabled}})
 
@@ -394,7 +396,12 @@ class Settings(commands.Cog, name="settings"):
         if player:
             player.settings["disabled_sources"] = disabled
 
-        await dispatch_message(ctx, f"{icon} **{display}** has been **{state}** on this server.")
+        text = await LangHandler.get_lang(ctx.guild.id, lang_key)
+        if not text or text == "Not found!":
+            text = fallback
+        else:
+            text = text.format(display)
+        await dispatch_message(ctx, text)
 
     # ──────────────────────────────────────────────────────────────────────────
 

@@ -140,6 +140,11 @@
         "permissions": {
             "title": "✨ Uprawnienia:",
             "value": "```{0} Administrator\n{1} Zarządzanie_serwerem\n{2} Zarządzanie_kanałem\n{3} Zarządzanie_wiadomościami```"
+        },
+        "sources": {
+            "blocked": "❌ The **{0}** source is disabled on this server.",
+            "enabled": "✅ **{0}** has been enabled on this server.",
+            "disabled": "❌ **{0}** has been disabled on this server."
         }
     },
     "ping": {

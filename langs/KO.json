@@ -140,6 +140,11 @@
         "permissions": {
             "title": "✨ 권한:",
             "value": "```{0} 관리자\n{1} 서버 관리\n{2} 채널 관리\n{3} 메시지 관리```"
+        },
+        "sources": {
+            "blocked": "❌ The **{0}** source is disabled on this server.",
+            "enabled": "✅ **{0}** has been enabled on this server.",
+            "disabled": "❌ **{0}** has been disabled on this server."
         }
     },
     "ping": {

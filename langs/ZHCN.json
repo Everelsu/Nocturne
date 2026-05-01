@@ -140,6 +140,11 @@
         "permissions": {
             "title": "✨ 权限:",
             "value": "```{0} 管理员\n{1} 管理服务器\n{2} 管理频道\n{3} 管理消息```"
+        },
+        "sources": {
+            "blocked": "❌ The **{0}** source is disabled on this server.",
+            "enabled": "✅ **{0}** has been enabled on this server.",
+            "disabled": "❌ **{0}** has been disabled on this server."
         }
     },
     "ping": {
