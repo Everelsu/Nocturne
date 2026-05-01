@@ -7,7 +7,7 @@ from typing import List, Dict, Union, Optional, TYPE_CHECKING
 from discord import User, Member
 from discord.ext import commands
 from voicelink import Player, Track, Playlist, NodePool, LoopType, Filters, Config, MongoDBHandler, LangHandler, LYRICS_PLATFORMS
-from voicelink.utils import TempCtx
+from voicelink.utils import TempCtx, get_query_source, KNOWN_SOURCES
 
 if TYPE_CHECKING:
     from .client import IPCClient
@@ -25,7 +25,8 @@ SCOPES = {
     "duplicate_track": bool,
     "silent_msg": bool,
     "default_controller": dict,
-    "stage_announce_template": str
+    "stage_announce_template": str,
+    "disabled_sources": list,
 }
 
 class SystemMethod:
@@ -224,10 +225,24 @@ async def moveTrack(player: Player, member: Member, data: Dict) -> None:
 async def addTracks(player: Player, member: Member, data: Dict) -> None:
     _type = data.get("type", "addToQueue")
     tracks = [Track(
-        track_id=track_id, 
+        track_id=track_id,
         info=Track.decode(track_id),
         requester=member
     ) for track_id in data.get("tracks", [])]
+
+    # ── Source blocking ──────────────────────────────────────────────────
+    disabled_sources: list = player.settings.get("disabled_sources", [])
+    if disabled_sources and tracks:
+        allowed = [t for t in tracks if t.source not in disabled_sources]
+        blocked = [t for t in tracks if t.source in disabled_sources]
+        if blocked and not allowed:
+            sources_str = ", ".join({KNOWN_SOURCES.get(t.source, t.source) for t in blocked})
+            return error_msg(
+                f"❌ All requested tracks are from disabled sources ({sources_str}).",
+                user_id=member.id,
+            )
+        tracks = allowed
+    # ────────────────────────────────────────────────────────────────────
 
     if _type == "addToQueue":
         await player.add_track(tracks)
@@ -248,6 +263,22 @@ async def getTracks(bot: commands.Bot, data: Dict) -> Dict:
 
     if query:
         payload = {"op": "getTracks", "userId": data.get("userId"), "callback": data.get("callback")}
+
+        # ── Source blocking (search panel) ───────────────────────────────
+        guild_id = int(data.get("guildId") or 0)
+        if guild_id:
+            settings = await MongoDBHandler.get_settings(guild_id)
+            disabled_sources: list = settings.get("disabled_sources", [])
+            if disabled_sources:
+                source = get_query_source(query)
+                if source and source in disabled_sources:
+                    display = KNOWN_SOURCES.get(source, source)
+                    return error_msg(
+                        f"❌ The **{display}** source is disabled on this server.",
+                        user_id=int(data.get("userId") or 0),
+                    )
+        # ─────────────────────────────────────────────────────────────────
+
         try:
             tracks = await NodePool.get_node().get_tracks(query=query, requester=None)
         except Exception:
@@ -259,6 +290,18 @@ async def getTracks(bot: commands.Bot, data: Dict) -> Dict:
         return payload
 
 async def searchAndPlay(player: Player, member: Member, data: Dict) -> None:
+    # ── Source blocking ──────────────────────────────────────────────────
+    disabled_sources: list = player.settings.get("disabled_sources", [])
+    if disabled_sources:
+        source = get_query_source(data.get("query", ""))
+        if source and source in disabled_sources:
+            display = KNOWN_SOURCES.get(source, source)
+            return error_msg(
+                f"❌ The **{display}** source is disabled on this server.",
+                user_id=member.id,
+            )
+    # ────────────────────────────────────────────────────────────────────
+
     payload = await getTracks(player.bot, data)
     if not payload or not payload.get("tracks"):
         return

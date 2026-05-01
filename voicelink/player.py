@@ -57,7 +57,7 @@ from .queue import Queue, QUEUE_TYPES
 from .mongodb import MongoDBHandler
 from .language import LangHandler
 from .views import InteractiveController
-from .utils import format_ms, dispatch_message
+from .utils import format_ms, dispatch_message, get_query_source, KNOWN_SOURCES
 
 if TYPE_CHECKING:
     from .ipc import IPCClient
@@ -547,7 +547,16 @@ class Player(VoiceProtocol):
         """
         if not search_type:
             search_type = Config().search_platform
-            
+
+        # ── Source blocking ──────────────────────────────────────────────
+        disabled_sources: list = self.settings.get("disabled_sources", [])
+        if disabled_sources:
+            source = get_query_source(query, search_type)
+            if source and source in disabled_sources:
+                display = KNOWN_SOURCES.get(source, source)
+                raise VoicelinkException(f"❌ The **{display}** source is disabled on this server.")
+        # ────────────────────────────────────────────────────────────────
+
         return await self._node.get_tracks(query, requester=requester, search_type=search_type)
 
     async def connect(self, *, timeout: float, reconnect: bool, self_deaf: bool = True, self_mute: bool = False):

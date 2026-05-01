@@ -22,6 +22,7 @@ SOFTWARE.
 """
 
 import random
+import re
 import time
 import socket
 import discord
@@ -29,10 +30,97 @@ import discord
 from itertools import zip_longest
 from typing import Dict, Optional, Union
 from timeit import default_timer as timer
+from urllib.parse import urlparse
 from discord.ext import commands
 
 from .mongodb import MongoDBHandler
 from .language import LangHandler
+
+# ── Music source detection ─────────────────────────────────────────────────────
+
+# Maps canonical source key → human display name.
+# Source keys match Lavalink's ``sourceName`` field so Track.source
+# comparisons work without extra translation.
+KNOWN_SOURCES: dict[str, str] = {
+    "youtube":      "YouTube",
+    "youtubemusic": "YouTube Music",
+    "spotify":      "Spotify",
+    "soundcloud":   "SoundCloud",
+    "applemusic":   "Apple Music",
+    "deezer":       "Deezer",
+    "yandexmusic":  "Yandex Music",
+    "vkmusic":      "VK Music",
+    "tidal":        "Tidal",
+    "qobuz":        "Qobuz",
+    "jiosaavn":     "JioSaavn",
+    "bandcamp":     "Bandcamp",
+    "twitch":       "Twitch",
+    "vimeo":        "Vimeo",
+}
+
+# Search prefix (without the colon) → canonical source key
+_PREFIX_TO_SOURCE: dict[str, str] = {
+    "ytsearch":  "youtube",
+    "ytmsearch": "youtubemusic",
+    "spsearch":  "spotify",
+    "scsearch":  "soundcloud",
+    "amsearch":  "applemusic",
+    "dzsearch":  "deezer",
+    "ymsearch":  "yandexmusic",
+    "vksearch":  "vkmusic",
+    "tdsearch":  "tidal",
+    "qbsearch":  "qobuz",
+    "jssearch":  "jiosaavn",
+}
+
+# (domain substrings, canonical source key) — ordered: more specific first
+_DOMAIN_TO_SOURCE: list[tuple[tuple[str, ...], str]] = [
+    (("music.youtube.com",),               "youtubemusic"),
+    (("youtube.com", "youtu.be"),          "youtube"),
+    (("open.spotify.com", "spotify.com"),  "spotify"),
+    (("soundcloud.com",),                  "soundcloud"),
+    (("music.apple.com",),                 "applemusic"),
+    (("deezer.com",),                      "deezer"),
+    (("music.yandex.com", "music.yandex.ru"), "yandexmusic"),
+    (("vk.com", "vkontakte.ru"),           "vkmusic"),
+    (("tidal.com",),                       "tidal"),
+    (("qobuz.com",),                       "qobuz"),
+    (("jiosaavn.com",),                    "jiosaavn"),
+    (("bandcamp.com",),                    "bandcamp"),
+    (("twitch.tv",),                       "twitch"),
+    (("vimeo.com",),                       "vimeo"),
+]
+
+_URL_RE = re.compile(r"https?://")
+
+
+def get_query_source(query: str, search_type=None) -> str | None:
+    """Return the canonical source key for *query*, or ``None`` if unknown.
+
+    Detection priority:
+    1. URL  — hostname matched against ``_DOMAIN_TO_SOURCE``
+    2. Prefixed query (e.g. ``"ytsearch:foo"``) — prefix matched
+    3. Plain text — falls back to *search_type* (a :class:`SearchType` enum
+       whose ``str()`` returns its value, e.g. ``"ytsearch"``)
+    """
+    if _URL_RE.match(query):
+        hostname = (urlparse(query).hostname or "").lower().lstrip("www.")
+        for domains, source in _DOMAIN_TO_SOURCE:
+            for domain in domains:
+                if hostname == domain or hostname.endswith("." + domain):
+                    return source
+        return None
+
+    if ":" in query:
+        prefix = query.split(":", 1)[0]
+        return _PREFIX_TO_SOURCE.get(prefix)
+
+    # Plain text search — use the search_type if provided
+    if search_type is not None:
+        key = str(search_type)  # SearchType.__str__ returns e.g. "ytsearch"
+        return _PREFIX_TO_SOURCE.get(key)
+
+    return None
 
 # __all__ = [
 #     "ExponentialBackoff",

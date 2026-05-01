@@ -36,7 +36,12 @@ from function import (
 from voicelink import MongoDBHandler, LangHandler
 from voicelink.views import DebugView, HelpView, EmbedBuilderView
 from voicelink.placeholders import PlayerPlaceholder
-from voicelink.utils import format_ms, format_bytes, dispatch_message, send_localized_message
+from voicelink.utils import format_ms, format_bytes, dispatch_message, send_localized_message, KNOWN_SOURCES
+
+# (display name, source key) pairs for source blocking commands
+_AVAILABLE_SOURCES: list[tuple[str, str]] = [
+    (display, key) for key, display in KNOWN_SOURCES.items()
+]
 
 _RESET_LABELS: dict[str, str] = {
     "prefix": "prefix",
@@ -334,6 +339,65 @@ class Settings(commands.Cog, name="settings"):
             player.queue._allow_duplicate = True
         await send_localized_message(ctx, "settings.actions.resetDone", setting.capitalize())
         
+    # ── Source blocking ────────────────────────────────────────────────────────
+
+    @settings.group(name="source", aliases=get_aliases("source"), invoke_without_command=True)
+    @commands.has_permissions(manage_guild=True)
+    @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
+    async def source_group(self, ctx: commands.Context):
+        "Show which music sources are enabled or disabled for this server."
+        settings = await MongoDBHandler.get_settings(ctx.guild.id)
+        disabled: list = settings.get("disabled_sources", [])
+
+        lines = []
+        for display, key in _AVAILABLE_SOURCES:
+            icon = "❌" if key in disabled else "✅"
+            lines.append(f"{icon} **{display}**")
+
+        embed = discord.Embed(
+            title="🎵 Music Source Restrictions",
+            description="\n".join(lines),
+            color=voicelink.Config().embed_color,
+        )
+        embed.set_footer(text="Use /settings source toggle <source> to enable or disable a source.")
+        await dispatch_message(ctx, embed)
+
+    @source_group.command(name="toggle", aliases=get_aliases("sourcetoggle"))
+    @app_commands.describe(source="The music source to enable or disable.")
+    @app_commands.choices(source=[
+        app_commands.Choice(name=display, value=key)
+        for display, key in _AVAILABLE_SOURCES
+    ])
+    @commands.has_permissions(manage_guild=True)
+    @commands.dynamic_cooldown(cooldown_check, commands.BucketType.guild)
+    async def source_toggle(self, ctx: commands.Context, source: str):
+        "Enable or disable a specific music source for this server."
+        if source not in KNOWN_SOURCES:
+            choices = ", ".join(f"`{k}`" for k in KNOWN_SOURCES)
+            return await dispatch_message(ctx, f"❌ Unknown source. Available: {choices}", ephemeral=True)
+
+        settings = await MongoDBHandler.get_settings(ctx.guild.id)
+        disabled: list = settings.get("disabled_sources", [])
+        display = KNOWN_SOURCES[source]
+
+        if source in disabled:
+            disabled.remove(source)
+            icon, state = "✅", "enabled"
+        else:
+            disabled.append(source)
+            icon, state = "❌", "disabled"
+
+        await MongoDBHandler.update_settings(ctx.guild.id, {"$set": {"disabled_sources": disabled}})
+
+        # Sync live player settings so the change takes effect immediately
+        player: voicelink.Player = ctx.guild.voice_client
+        if player:
+            player.settings["disabled_sources"] = disabled
+
+        await dispatch_message(ctx, f"{icon} **{display}** has been **{state}** on this server.")
+
+    # ──────────────────────────────────────────────────────────────────────────
+
     @app_commands.command(name="debug")
     async def debug(self, interaction: discord.Interaction):
         if interaction.user.id not in voicelink.Config().bot_access_user:
